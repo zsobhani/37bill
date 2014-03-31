@@ -11,8 +11,8 @@ To get started, I added two files which I was playing with to get familiar with 
 
  http://fromthepantothefire.com/2014/03/24/deloreans-of-massachusetts-2008-2011/
 
-delorean_extract.py // pull only the delorean records from the rae db
-delorean_process.py // work with the new file proc/deloreans.csv
+delorean_extract.py -- copies only the delorean records from the rae db
+delorean_process.py -- work with the new file proc/deloreans.csv extracted above
 
 
 
