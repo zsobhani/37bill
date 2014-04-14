@@ -19,11 +19,21 @@
     <script src="viz.js"></script>
   </head>
   <body>
-    <h2> Hello Massachusetts </h2>
+    <h2> Massachusetts Grid Driving Data </h2>
+    <p>The map below shows data provided by MAPC in 250m grid squares (~15 acres) for selected towns in the Boston metro area. You can select other values to be displayed on the map from the drop down menu:</p>
     <select id="metricSelection" data-bind="value: selectedIndex, valueUpdate:'input'""></select>
     <h3 id="mapTitle">This is the map title</h3>
     
     <div id="map"></div>
+    <div id="legend"></div>
+<p> Note correlation between population density, income and miles driven per person, this is pretty clear when looking at the wealthiest towns in MA (Dover and Weston, based on analysis of car values) and also the areas around Franklin Park in Boston (is this a lower income place, why is driving so low there? Is it just too terrible to drive around there?)</p>
+
+<h3> Credits </h3>
+<p>This visualization was created by Paul Schimek and Zia Sobhani.</p>
+<p>This product includes color
+specifications and designs developed by Cynthia Brewer
+(http://colorbrewer.org/).</p>
+<p>  Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.</p>
   </body>
 </html>
 

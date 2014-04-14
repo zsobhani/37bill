@@ -1,10 +1,16 @@
 #map {
-  width: 960px;
+  width: 920px;
   height: 500px;
 }
 
 svg {
   position: relative;
+}
+/* Fix me: this should be the same height as the map...*/
+#legend{
+    position:absolute;
+    left: 940px;
+    top: 200px;
 }
 
 path {

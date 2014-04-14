@@ -12,20 +12,26 @@ var ViewModel = function(options, selectedIndex){
     }, this);
     
 }
+function getMap(greyscale, zoom){
+    if(greyscale){
+	// http://maps.stamen.com/#toner/10/42.3810/-71.5113
+	var layer = new L.StamenTileLayer("toner-lite");
+	var map = new L.Map("map", {
+	    center: new L.LatLng(42.355, -71.11),
+	    zoom: zoom
+	});
+	map.addLayer(layer);
+    }else{
+	//color background, better labels
+	var map = new L.Map("map").setView([42.355, -71.095], zoom)
+		.addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
+    }
 
+    return map;
+}
 
 $(document).ready(function() {
-    // color background, better labels
-    // var map = new L.Map("map").setView([42.355, -71.095], 12)
-    // 	.addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
-
-    // http://maps.stamen.com/#toner/10/42.3810/-71.5113
-    var layer = new L.StamenTileLayer("toner-lite");
-    var map = new L.Map("map", {
-	center: new L.LatLng(42.355, -71.11),
-	zoom: 12
-    });
-    map.addLayer(layer);
+    var map = getMap(true, 11);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -37,18 +43,25 @@ $(document).ready(function() {
 	 "min": 0,  "minColor": "white", 
 	 "max": 50, "maxColor": "blue",
 	 "brewColor": "YlOrRd", 
-	 "brewCutoffs": [5, 10, 20, 30, 50, 60, 80, 100] // should specify 8 at most
+	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
 	{"varName": "pop10", "displayName": "Population 2010",
 	 "min": 0,   "minColor": "white", 
 	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Blues", 
-	 "brewCutoffs": [5, 50, 100, 500, 1000, 2000, 3000]
+	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
+	},
+	{"varName": "co2eqv_day", "displayName": "Estimated CO2 equivalent per day",
+	 "min": 0,   "minColor": "white", 
+	 "max": 2000, "maxColor": "blue",
+	 "brewColor": "Reds", 
+	 "brewCutoffs": [50, 100, 500, 1000, 1500,2000, 2500, 3000]
 	},
     ];
 
     var colorScales = [];
     var colorScalesDiscrete = [];
+    var legendStrings = []
     for(var i = 0; i < options.length; i++){
 	var tmp = options[i];
 	options[i]['getMetric'] = function(d){
@@ -65,7 +78,7 @@ $(document).ready(function() {
 	.attr("value", function(d,i){ return i;})
 	.text(function(d){ return d.displayName;});
     
-    window.view_model = new ViewModel(options, 1);
+    window.view_model = new ViewModel(options, 0);
     
     ko.computed(function(){
 	console.log("changed " +  view_model.title());
@@ -82,36 +95,15 @@ $(document).ready(function() {
     
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
     var file = "../../proc/ma_municipalities.geojson";
- //   var file = "../../proc/grid_attr.geojson";
-    var file = "data/grid_attr_filtBOS2.geojson";
-
+ 
+    var file = "data/grid_attr_filtBOS4.geojson";
+    // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
+    
     ko.applyBindings(view_model); // ko gets to work
     
     d3.json(file, function(collection){
-	
-	// vehicles/person
-	// function getMetric(d){
-	//     return d.properties.pass_veh/d.properties.pop10;
-	// }
-	// console.log(collection.features);
-	// var metricArray = _(collection.features).map(getMetric);
-	
-	// var colorScale = d3.scale.linear()
-	//     .domain([_(metricArray).min(), 1])//_(metricArray).max()])
-	//     .interpolate(d3.interpolateHcl)
-	//     //.range(["#E7F670", "#371C11"]); // orange
-	// //.range([ "#8DF69F", "#6DC884", "#0C2519"]); // greens
-	//     .range(['white','blue']);// 'red']);
 
-	function tooltipText(d){
-	    var p = d.properties;
-	    var s = "# Pop10 " + p.pop10 + 
-		"  # Vehicles" + p.pass_veh +
-		"  Vehilces Per Person" +p.pass_veh/p.pop10;
-	    return s;
-	    
-	}
-
+	
 	for(var i = 0; i < options.length; i++){
 	    var desired = options[i]['varName'];
 	    var metricArray = _(collection.features).map(function (d){ 
@@ -127,13 +119,7 @@ $(document).ready(function() {
 		.domain([options[i].min, options[i].max])
 		.interpolate(d3.interpolateHcl)
 		.range([options[i].minColor, options[i].maxColor]);
-	    
-	    // var lowEnd = 1;
-	    // var highEnd = 25;
-	    // var arr = [];
-	    // while(lowEnd <= highEnd){
-	    //    arr.push(lowEnd++);
-	    // }
+	 
 	    colorScales.push(cs);
 	    var bstr = "colorbrewer."+options[i].brewColor+"[9]";
 	    console.log(bstr);
@@ -142,15 +128,62 @@ $(document).ready(function() {
 		.range(eval(bstr));
 	    colorScalesDiscrete.push(csd);
 
+	    // make a legend string
+	    var bcs = options[i]["brewCutoffs"];
+	    
+	    var lstr = [];
+	    lstr.push(" < " + bcs[0]);
+	    for(var j = 1; j < bcs.length; j++){
+		lstr.push(bcs[j-1] + " - " + bcs[j]);
+	    }
+	    lstr.push("   > " + bcs[bcs.length-1]);
+	    console.log(lstr);
+	    legendStrings.push(lstr);
+
+	    
 	}
 
+var legend = d3.select("#legend").append("svg")
+	    .attr("width", 100).attr("height", 250);
+
+	function updateLegend(ind /*variable being plotted*/){
+	    // make the discrete legend:
+	    //var legend = d3.select('#legend svg');
+	    var lw = 20;
+	    var lh = 20;
+	    var lmargin = 3;
+	    var lstr = legendStrings[ind];
+	    var rects = legend.selectAll("rect")
+		.data(lstr, function(d){ return d + ind;});
+	    rects
+		.enter()
+		.append("rect")
+		.attr("x", 0)
+		.attr("y", function(d, i){return i*(lh+lmargin);})
+		.attr("width", lw)
+		.attr("height", lh)
+		.attr("fill", function(d, i){
+		    return colorScalesDiscrete[ind](i);});
+	    rects.exit().remove();
+	    var labels = legend.selectAll("text")
+	    	.data(lstr, function(d){ return d + ind;});
+	    labels
+		.enter()
+		.append("text")
+		.attr("x", lw+10)
+		.attr("y", function(d, i){return i*(lh+lmargin)+ lh -3;})
+		.attr("width", lw)
+		.attr("height", lh)
+		.text(function(d){return d;});
+	    labels.exit().remove();
+	}
 	
 
 
 	function tooltipText(d){
 	    var p = d.properties;
 	    var s = "# Pop10 " + p.pop10 + 
-		"  mipdaybest " + p.mipdaybest +
+		"  co2 " + p.co2eqv_day +
 		" MPDPP " +p.MPDPP;
 	    return s;
 	    
@@ -171,11 +204,14 @@ $(document).ready(function() {
 	    view_model.selectedIndex();
 	    reset();
 	});
+
+	
 	// Reposition the SVG to cover the features.
 	function reset() {
 	
 	    var ind = view_model.selectedIndex()
-	    console.log("reset" + ind);
+	    updateLegend(ind);
+	    
 	    var bounds = path.bounds(collection),
             topLeft = bounds[0],
             bottomRight = bounds[1];
