@@ -35,7 +35,7 @@ $(document).ready(function() {
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
-   
+       
     // options should include
     // display name, min and max, color scheme, function for lookup of metric?
     var options = [
@@ -85,18 +85,13 @@ $(document).ready(function() {
 	$("#mapTitle").text(view_model.title());
     })
     
-    var tooltip = d3.select("body")
-	.append("div")
-	.style("position", "absolute")
-	.style("z-index", "10")
-	.style("visibility", "hidden")
-	.text("a simple tooltip");
+    var tooltipContainer = d3.select("#tooltipContainer");
 
     
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
     var file = "../../proc/ma_municipalities.geojson";
  
-    var file = "data/grid_attr_filtBOS4.geojson";
+    var file = "data/grid_attr_filtBOS2.geojson";
     // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
     
     ko.applyBindings(view_model); // ko gets to work
@@ -143,8 +138,8 @@ $(document).ready(function() {
 	    
 	}
 
-var legend = d3.select("#legend").append("svg")
-	    .attr("width", 100).attr("height", 250);
+	var legend = d3.select("#legend").append("svg")
+	    .attr("width", 150).attr("height", 250);
 
 	function updateLegend(ind /*variable being plotted*/){
 	    // make the discrete legend:
@@ -154,7 +149,7 @@ var legend = d3.select("#legend").append("svg")
 	    var lmargin = 3;
 	    var lstr = legendStrings[ind];
 	    var rects = legend.selectAll("rect")
-		.data(lstr, function(d){ return d + ind;});
+		.data(lstr, function(d, i){ return d + ind*10 + i;});
 	    rects
 		.enter()
 		.append("rect")
@@ -166,7 +161,7 @@ var legend = d3.select("#legend").append("svg")
 		    return colorScalesDiscrete[ind](i);});
 	    rects.exit().remove();
 	    var labels = legend.selectAll("text")
-	    	.data(lstr, function(d){ return d + ind;});
+	    	.data(lstr, function(d, i){ return d + ind*10 + i;});
 	    labels
 		.enter()
 		.append("text")
@@ -204,7 +199,66 @@ var legend = d3.select("#legend").append("svg")
 	    view_model.selectedIndex();
 	    reset();
 	});
+	var simpleTooltip = d3.selectAll("#tooltipContainer")
+	    .style("opacity", 0);
 
+	function getPathPosition(d){
+	    // hack here to calculate the top center of rectangular paths
+	    pointA = d.geometry.coordinates[0][0];
+	    pointB = d.geometry.coordinates[0][2];
+
+	    var point1 = map.latLngToLayerPoint(
+		new L.LatLng(pointA[1], pointA[0])); 
+	    var point2 = map.latLngToLayerPoint(
+		new L.LatLng(pointB[1], pointB[0])); 
+
+	    // get middle x value and min y value
+	    var x_pos = (point1.x + point2.x)/2;
+	    var y_pos = Math.min(point1.y, point2.y);
+	    
+	    // get the offset of the map on the page
+	    var mapOffsets = $(".leaflet-layer").offset(); // this works with both panning and zoom.
+	    
+	    return {"x": x_pos + mapOffsets.left, 
+		    "y": y_pos +mapOffsets.top};
+	}
+
+	function enableTooltip(d, displayRequested){
+	    
+            if(!displayRequested){
+		// hide the tooltip
+		simpleTooltip.style("opacity", 0);
+            }else{ 
+		// show the tooltip
+		
+		// set the data to display:
+		simpleTooltip.select(".tooltipTitle")
+		    .text(d.properties.municipal);
+		simpleTooltip.selectAll(".tooltipMetricContainer");
+		// get the dimensions dynamically if the size could change
+		var h = $("#tooltipContainer").height();
+		var w = $("#tooltipContainer").width();
+		
+		// center the tail dynamically
+		simpleTooltip.select(".tooltipTail-down")
+		    .style("left", (w/2 - 29/2) + "px");
+		
+		// position of top of path rectangle relative to page
+		var offsets = getPathPosition(d);
+		// position with respect to mouse on mouseover
+		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
+		simpleTooltip 
+		    .style("left", ( offsets.x- w/2) + "px")     
+                    .style("top", ( offsets.y-h -13 -3-20) + "px");
+	
+		// fade in the tooltip, note transition seems to result 
+		// in the tooltip sometimes being left displayed...
+		simpleTooltip//.transition()        
+		    //.duration(200)      
+                    .style("opacity", 0.95);      
+            }
+            
+	}
 	
 	// Reposition the SVG to cover the features.
 	function reset() {
@@ -242,13 +296,10 @@ var legend = d3.select("#legend").append("svg")
 		    
 		})
 		.on("mouseover", function(d){
-		    tooltip.style("visibility", "visible");
-		    tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-		    tooltip.text(tooltipText(d));
-
+		    enableTooltip(d, true);
 		})
 		.on("mouseout", function(d){
-		    tooltip.style("visibility", "hidden");
+		    enableTooltip(d, false);
 		});
 	
 	}
@@ -259,6 +310,7 @@ var legend = d3.select("#legend").append("svg")
 	function projectPoint(x, y) {
 	    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
 	    this.stream.point(point.x, point.y);
+	    //console.log("this is point" + point);
 	}
 	    
     });
