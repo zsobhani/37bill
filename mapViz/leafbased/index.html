@@ -36,19 +36,30 @@ specifications and designs developed by Cynthia Brewer
 <p>  Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.</p>
 
 <div id ="tooltipContainer">
-  <div class="tooltipTitle">Tooltip Title</div>
+
+  <div class="tooltipTitleContainer">
+    <span class="tooltipTitle">Tooltip Title</span>
+    <span class="tooltipSubTitle">grid</span>
+  </div>
   <div class="tooltipContentsContainer">
-    <div class="tooltipMetricContainer"> 
+    <div id ="MPDPP" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
+
+    <br>
+    <div id ="pop10" class="tooltipMetricContainer"> 
       <span class="tooltipMetricName">Measured Value</span>
       <span class="tooltipMetricValue">2345.67</span>
     </div>
-    <div class="tooltipMetricContainer"> 
-      <span class="tooltipMetricName">Measured Value B</span>
-      <span class="tooltipMetricValue">876.32</span>
-    </div>
+    <br>
+    <div id="co2" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
   </div>
   <div class="tooltipTail-down"></div>
 </div>
-  </body>
+</body>
 </html>
 

@@ -40,25 +40,28 @@ $(document).ready(function() {
     // display name, min and max, color scheme, function for lookup of metric?
     var options = [
 	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
+	 "tipId": "#MPDPP", "tipfmt": 1,
 	 "min": 0,  "minColor": "white", 
 	 "max": 50, "maxColor": "blue",
 	 "brewColor": "YlOrRd", 
 	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
 	{"varName": "pop10", "displayName": "Population 2010",
+	 "tipId": "#pop10", "tipfmt": 0,
 	 "min": 0,   "minColor": "white", 
 	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
 	{"varName": "co2eqv_day", "displayName": "Estimated CO2 equivalent per day",
+	 "tipId": "#co2", "tipfmt": 0,
 	 "min": 0,   "minColor": "white", 
 	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Reds", 
 	 "brewCutoffs": [50, 100, 500, 1000, 1500,2000, 2500, 3000]
 	},
     ];
-
+    
     var colorScales = [];
     var colorScalesDiscrete = [];
     var legendStrings = []
@@ -199,10 +202,10 @@ $(document).ready(function() {
 	    view_model.selectedIndex();
 	    reset();
 	});
-	var simpleTooltip = d3.selectAll("#tooltipContainer")
-	    .style("opacity", 0);
+	var simpleTooltip = d3.selectAll("#tooltipContainer");
+	    //.style("opacity", 0);
 
-	function getPathPosition(d){
+	function getRectangularPathTopCenterPosition(d){
 	    // hack here to calculate the top center of rectangular paths
 	    pointA = d.geometry.coordinates[0][0];
 	    pointB = d.geometry.coordinates[0][2];
@@ -216,40 +219,51 @@ $(document).ready(function() {
 	    var x_pos = (point1.x + point2.x)/2;
 	    var y_pos = Math.min(point1.y, point2.y);
 	    
-	    // get the offset of the map on the page
-	    var mapOffsets = $(".leaflet-layer").offset(); // this works with both panning and zoom.
+	    // get the offset of the map on the page, 
+	    // using the overlay we are drawing on
+	    var mapOffsets = $(map.getPanes().overlayPane).offset();
 	    
 	    return {"x": x_pos + mapOffsets.left, 
-		    "y": y_pos +mapOffsets.top};
+		    "y": y_pos + mapOffsets.top};
 	}
 
-	function enableTooltip(d, displayRequested){
+	function updateTooltip(d, displayRequested){
 	    
             if(!displayRequested){
 		// hide the tooltip
 		simpleTooltip.style("opacity", 0);
-            }else{ 
-		// show the tooltip
+            }else{ // show the tooltip
 		
 		// set the data to display:
 		simpleTooltip.select(".tooltipTitle")
 		    .text(d.properties.municipal);
-		simpleTooltip.selectAll(".tooltipMetricContainer");
+		simpleTooltip.select(".tooltipSubtitle")
+		    .text("[" + d.properties.g250m_id +"]");
+		for(var i = 0; i < options.length; i++){
+
+		    var o = options[i];
+		    var mc = simpleTooltip.select(o['tipId']);
+		    
+		    mc.select(".tooltipMetricName").text(o.displayName);
+		    mc.select(".tooltipMetricValue").text(
+			d.properties[o.varName].toFixed(o.tipfmt));
+
+		}
 		// get the dimensions dynamically if the size could change
 		var h = $("#tooltipContainer").height();
-		var w = $("#tooltipContainer").width();
+		var w = $("#tooltipContainer").width()+10;
 		
 		// center the tail dynamically
 		simpleTooltip.select(".tooltipTail-down")
 		    .style("left", (w/2 - 29/2) + "px");
 		
 		// position of top of path rectangle relative to page
-		var offsets = getPathPosition(d);
+		var offsets = getRectangularPathTopCenterPosition(d);
 		// position with respect to mouse on mouseover
 		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
 		simpleTooltip 
 		    .style("left", ( offsets.x- w/2) + "px")     
-                    .style("top", ( offsets.y-h -13 -3-20) + "px");
+                    .style("top", ( offsets.y-h -36) + "px");
 	
 		// fade in the tooltip, note transition seems to result 
 		// in the tooltip sometimes being left displayed...
@@ -296,10 +310,10 @@ $(document).ready(function() {
 		    
 		})
 		.on("mouseover", function(d){
-		    enableTooltip(d, true);
+		    updateTooltip(d, true);
 		})
 		.on("mouseout", function(d){
-		    enableTooltip(d, false);
+		    updateTooltip(d, false);
 		});
 	
 	}
@@ -317,3 +331,4 @@ $(document).ready(function() {
 
     
 });
+

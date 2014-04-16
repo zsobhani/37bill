@@ -23,7 +23,7 @@ path {
 
 path:hover {
   /*fill-opacity: 0.8;*/
-  stroke-width: 1px;
+  stroke-width: 2px;
   stroke: grey;
 }
 
@@ -31,18 +31,27 @@ path:hover {
 #tooltipContainer{
     position: absolute;
     display: block; /* set to "none" for production, "block" for debugging */
-    background: midnightblue;
+    background: dimgray;
     color: white;
     border-radius: 3px;
     padding: 10px;
-    width: 200px;
+    width: 300px;
     opacity: 0.95;
     pointer-events: none;
 }
 .tooltipTitle{
     font-weight: bold;
-    text-align: center;
+    text-align: left;
     margin-bottom: 10px;
+}
+.tooltipSubTitle{
+    font-weight: normal;
+    opacity: 0.8;
+    float: right;
+    font-size: 12;
+}
+.tooltipMetricContainer{
+    background: red;
 }
 .tooltipMetricName{
     float: left;
@@ -63,7 +72,7 @@ path:hover {
     height: 0; 
     border-right: 12px solid transparent;  /* left arrow slant */
     border-left: 12px solid transparent; /* right arrow slant */
-    border-top: 12px solid midnightblue; /* bottom, add background color here */
+    border-top: 12px solid dimgray; /* bottom, add background color here */
     font-size: 0;
     line-height: 0;
 }
