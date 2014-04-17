@@ -51,7 +51,7 @@ $(document).ready(function() {
 	 "brewColor": "Oranges", 
 	 "brewCutoffs": [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 5] // should specify 8 at most
 	},
-	{"varName": "sidewlksqm", "displayName": "sidewlksqm",
+	{"varName": "sidewlksqm", "displayName": "Length of Sidewalks",
 	 "tipfmt": 0,
 	 "brewColor": "Greens", 
 	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
@@ -71,10 +71,16 @@ $(document).ready(function() {
 	 "brewColor": "BuGn", 
 	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
 	},
-	{"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle Best Estimate",
+	{"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle",
 	 "tipfmt": 2,
 	 "brewColor": "OrRd", 
 	 "brewCutoffs": [5, 10, 15, 20, 25, 30, 35, 50] // should specify 8 at most
+	},
+
+	{"varName": "co2eqv_day", "displayName": "CO2 Eqivalent per Day",
+	 "tipfmt": 2,
+	 "brewColor": "Reds", 
+	 "brewCutoffs": [50, 100, 500, 1000, 1500, 2000, 3000] // should specify 8 at most
 	},
 
 	{"varName": "pop10", "displayName": "Population 2010",
@@ -84,13 +90,17 @@ $(document).ready(function() {
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
-	{"varName": "co2eqv_day", "displayName": "Estimated CO2 equivalent per day",
-	 "tipfmt": 0,
-	 "min": 0,   "minColor": "white", 
-	 "max": 2000, "maxColor": "blue",
-	 "brewColor": "Reds", 
-	 "brewCutoffs": [50, 100, 500, 1000, 1500,2000, 2500, 3000]
+	{"varName": "ChildPct", "displayName": "Population % Children",
+	 "tipfmt": 2,
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
 	},
+	{"varName": "SeniorPct", "displayName": "Population % over 65",
+	 "tipfmt": 2,
+	 "brewColor": "Purples", 
+	 "brewCutoffs": [0.01, 0.05, .1, 0.15, .20, .25, .3] // should specify 8 at most
+	},
+
     ];
     
     var colorScales = [];
@@ -139,19 +149,19 @@ $(document).ready(function() {
 		//console.log(d.properties[desired]);
 		return d.properties[desired];});
 
-	    var minV = _(metricArray).min();
-	    var maxV = _(metricArray).max();
-	    console.log([options[i]["varName"],"min", minV,"max", maxV].join(' '));
+	    // var minV = _(metricArray).min();
+	    // var maxV = _(metricArray).max();
+	    // console.log([options[i]["varName"],"min", minV,"max", maxV].join(' '));
 	    
-	    // create a color scale for each display option
-	    var cs = d3.scale.linear()
-		.domain([options[i].min, options[i].max])
-		.interpolate(d3.interpolateHcl)
-		.range([options[i].minColor, options[i].maxColor]);
+	    // // create a color scale for each display option
+	    // var cs = d3.scale.linear()
+	    // 	.domain([options[i].min, options[i].max])
+	    // 	.interpolate(d3.interpolateHcl)
+	    // 	.range([options[i].minColor, options[i].maxColor]);
 	 
-	    colorScales.push(cs);
+	    // colorScales.push(cs);
 	    var bstr = "colorbrewer."+options[i].brewColor+"[9]";
-	    console.log(bstr);
+	    
 	    var csd = d3.scale.ordinal()
 		.domain([0,1,2,3,4,5,6,7,8])
 		.range(eval(bstr));
@@ -166,7 +176,7 @@ $(document).ready(function() {
 		lstr.push(bcs[j-1] + " - " + bcs[j]);
 	    }
 	    lstr.push("   > " + bcs[bcs.length-1]);
-	    console.log(lstr);
+	    
 	    options[i]["legendStrings"] = lstr;
 
 	    
@@ -178,8 +188,6 @@ $(document).ready(function() {
 
 	function updateLegend(ind /*variable being plotted*/){
 	    // make the discrete legend:
-	    //var legend = d3.select('#legend svg');
-	    console.log(ind + "updating legend");
 	    var lw = 20;
 	    var lh = 20;
 	    var lmargin = 3;
@@ -256,7 +264,8 @@ $(document).ready(function() {
 	    
             if(!displayRequested){
 		// hide the tooltip
-		simpleTooltip.style("opacity", 0);
+		simpleTooltip
+		    .style("opacity", 0.3);
             }else{ // show the tooltip
 		
 		// set the data to display:
@@ -264,6 +273,8 @@ $(document).ready(function() {
 		    .text(d.properties.municipal);
 		simpleTooltip.select(".tooltipSubtitle")
 		    .text("[" + d.properties.g250m_id +"]");
+		//simpleTooltip.selectAll(".tooltipMetricContainer").remove();
+		
 		for(var i = 0; i < options.length; i++){
 
 		    var o = options[i];
@@ -283,9 +294,11 @@ $(document).ready(function() {
 		    .style("left", (w/2 - 29/2) + "px");
 		
 		// position of top of path rectangle relative to page
+		// above the grid cell
 		var offsets = getRectangularPathTopCenterPosition(d);
 		// position with respect to mouse on mouseover
 		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
+		var offsets = {"x": 980, "y": 780};
 		simpleTooltip 
 		    .style("left", ( offsets.x- w/2) + "px")     
                     .style("top", ( offsets.y-h -36) + "px");
@@ -354,15 +367,11 @@ $(document).ready(function() {
 	    
     });
 
+ 
+    var mfile = "data/ModelSimulation.json";
+            
+    d3.json(mfile, function(collection){
+	console.log(collection);
+    });
     
 });
-
-
-function updateLegend(ind /*variable being plotted*/){
-    
-    var lstr = legendStrings[ind];
-    var rects = legend.selectAll("rect")
-	.data(lstr, function(d, i){ return d + ind*10 + i;});
-    
-    /* do the rest of the work to render rects, text, etc */
-}

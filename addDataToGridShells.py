@@ -43,7 +43,8 @@ myFields = ['MPDPP', 'pass_veh', 'best_geo',
             'mipdaybest', 'co2eqv_day', 
             'pop10','pop1864_10', 'VehPP', 
             'schwlkindx','sidewlksqm',
-            'ChildPct', 'intsctnden', 'exit_dist', 'total_emp']
+            'ChildPct', 'SeniorPct', 
+            'intsctnden', 'exit_dist', 'total_emp']
 for f in myFields:
     addField(f, 8,5, -1)
 addField('VehPP1864', 8, 5, -1)
@@ -89,3 +90,6 @@ for r in sf.records:
 
 # and save as new shapefile with data.
 sf.save('proc/grid_250m_shell_smaller_data')
+
+
+

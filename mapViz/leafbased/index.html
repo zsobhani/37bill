@@ -21,12 +21,16 @@
   <body>
     <h2> Massachusetts Grid Driving Data </h2>
     <p>The map below shows data provided by MAPC in 250m grid squares (~15 acres) for selected towns in the Boston metro area. You can select other values to be displayed on the map from the drop down menu:</p>
-    <select id="metricSelection" data-bind="value: selectedIndex, valueUpdate:'input'"></select>
 
 <p> Note the data on this map is q2 2010 data, to align most closely with the 2010 census data ignoring any grids for which there were both zero households and zero vehicles (more details from Paul here or somewhere).</p>
 <p> Our goal is to explain miles traveled per person, we explored some of the following as explaintory variables: percent population of kids, seniors, population density, side walk length, school access, number of intersections. </p>
+
 <div id="mapContainer">
-<div id="mapTitle">This is the map title<ul></ul></div>
+   <div class="styled-select">
+<select id="metricSelection" data-bind="value: selectedIndex, valueUpdate:'input'"></select>
+</div>
+
+<!--<div id="mapTitle">This is the map title<ul></ul></div>-->
     
     <div id="map"></div>
     <div id="legend"></div>
@@ -65,6 +69,16 @@ specifications and designs developed by Cynthia Brewer
     </div>
     <br>
     <div id="co2eqv_day" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>
+<br>
+    <div id="ChildPct" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>
+<br>
+    <div id="SeniorPct" class="tooltipMetricContainer"> 
       <span class="tooltipMetricName">Measured Value</span>
       <span class="tooltipMetricValue">2345.67</span>
     </div> 

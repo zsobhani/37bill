@@ -1,4 +1,10 @@
 
+p{
+    width: 800px;
+}
+body{
+    margin-left: 10px;
+}
 #mapContainer{
     position: relative;
     height: 550px;
@@ -10,18 +16,36 @@
     margin-bottom: 10px;
 }
 
+.styled-select {
+   width: 350px;
+   height: 34px;
+   overflow: hidden;
+   background: url(new_arrow.png) no-repeat right white;
+   border: 0;/*1px solid #ccc;*/
+   }
+.styled-select select {
+   background: transparent;
+   width: 350px;
+   padding: 5px;
+   font-size: 20px;
+   font-weight: bold;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 34px;
+   -webkit-appearance: none;
+}
 #map {
-  width: 920px;
+  width: 800px;
   height: 500px;
   position: absolute;
-  top: 30px;
+  top: 40px;
 }
 
-/* Fix me: this should be the same height as the map...*/
 #legend{
     position:absolute;
-    left: 940px;
-    top: 30px;
+    left: 820px;
+    top: 40px;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
 
@@ -46,8 +70,8 @@ path:hover {
     color: white;
     border-radius: 3px;
     padding: 10px;
-    width: 300px;
-    opacity: 0;
+    width: 275px;
+    opacity: 0.95;
     pointer-events: none;
 }
 .tooltipTitle{
