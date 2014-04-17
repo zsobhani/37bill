@@ -40,21 +40,52 @@ $(document).ready(function() {
     // display name, min and max, color scheme, function for lookup of metric?
     var options = [
 	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
-	 "tipId": "#MPDPP", "tipfmt": 1,
+	 "tipfmt": 1,
 	 "min": 0,  "minColor": "white", 
 	 "max": 50, "maxColor": "blue",
 	 "brewColor": "YlOrRd", 
 	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
+	{"varName": "VehPP", "displayName": "Passenger Vehicles Per Person",
+	 "tipfmt": 2,
+	 "brewColor": "Oranges", 
+	 "brewCutoffs": [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 5] // should specify 8 at most
+	},
+	{"varName": "sidewlksqm", "displayName": "sidewlksqm",
+	 "tipfmt": 0,
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
+	},
+	{"varName": "schwlkindx", "displayName": "School Walk Index",
+	 "tipfmt": 2,
+	 "brewColor": "Purples", 
+	 "brewCutoffs": [0, 0.4, 0.6, 1, 2, 3, 5, 7] // should specify 8 at most
+	},
+	{"varName": "intsctnden", "displayName": "Intersection Density",
+	 "tipfmt": 0,
+	 "brewColor": "Oranges", 
+	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
+	},
+	{"varName": "total_emp", "displayName": "Total Employment",
+	 "tipfmt": 2,
+	 "brewColor": "BuGn", 
+	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
+	},
+	{"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle Best Estimate",
+	 "tipfmt": 2,
+	 "brewColor": "OrRd", 
+	 "brewCutoffs": [5, 10, 15, 20, 25, 30, 35, 50] // should specify 8 at most
+	},
+
 	{"varName": "pop10", "displayName": "Population 2010",
-	 "tipId": "#pop10", "tipfmt": 0,
+	 "tipfmt": 0,
 	 "min": 0,   "minColor": "white", 
 	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
 	{"varName": "co2eqv_day", "displayName": "Estimated CO2 equivalent per day",
-	 "tipId": "#co2", "tipfmt": 0,
+	 "tipfmt": 0,
 	 "min": 0,   "minColor": "white", 
 	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Reds", 
@@ -64,7 +95,7 @@ $(document).ready(function() {
     
     var colorScales = [];
     var colorScalesDiscrete = [];
-    var legendStrings = []
+    
     for(var i = 0; i < options.length; i++){
 	var tmp = options[i];
 	options[i]['getMetric'] = function(d){
@@ -94,7 +125,7 @@ $(document).ready(function() {
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
     var file = "../../proc/ma_municipalities.geojson";
  
-    var file = "data/grid_attr_filtBOS2.geojson";
+    var file = "data/grid_attr_filtBOS4.geojson";
     // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
     
     ko.applyBindings(view_model); // ko gets to work
@@ -136,7 +167,7 @@ $(document).ready(function() {
 	    }
 	    lstr.push("   > " + bcs[bcs.length-1]);
 	    console.log(lstr);
-	    legendStrings.push(lstr);
+	    options[i]["legendStrings"] = lstr;
 
 	    
 	}
@@ -144,15 +175,21 @@ $(document).ready(function() {
 	var legend = d3.select("#legend").append("svg")
 	    .attr("width", 150).attr("height", 250);
 
+
 	function updateLegend(ind /*variable being plotted*/){
 	    // make the discrete legend:
 	    //var legend = d3.select('#legend svg');
+	    console.log(ind + "updating legend");
 	    var lw = 20;
 	    var lh = 20;
 	    var lmargin = 3;
-	    var lstr = legendStrings[ind];
+	    var lstr = options[ind]['legendStrings'];
+	    // delete the rectangles, because can't figure out 
+	    // appropriate compare function including the "ind"
+	    // or rather deleting them is a simpler option
+	    legend.selectAll("rect").remove();
 	    var rects = legend.selectAll("rect")
-		.data(lstr, function(d, i){ return d + ind*10 + i;});
+		.data(lstr, function(d, i){ return d + i;});
 	    rects
 		.enter()
 		.append("rect")
@@ -164,7 +201,7 @@ $(document).ready(function() {
 		    return colorScalesDiscrete[ind](i);});
 	    rects.exit().remove();
 	    var labels = legend.selectAll("text")
-	    	.data(lstr, function(d, i){ return d + ind*10 + i;});
+	    	.data(lstr, function(d, i){ return d + i;});
 	    labels
 		.enter()
 		.append("text")
@@ -175,18 +212,6 @@ $(document).ready(function() {
 		.text(function(d){return d;});
 	    labels.exit().remove();
 	}
-	
-
-
-	function tooltipText(d){
-	    var p = d.properties;
-	    var s = "# Pop10 " + p.pop10 + 
-		"  co2 " + p.co2eqv_day +
-		" MPDPP " +p.MPDPP;
-	    return s;
-	    
-	}
-
 	
 	var transform = d3.geo.transform({point: projectPoint}),
 	path = d3.geo.path().projection(transform);
@@ -203,7 +228,7 @@ $(document).ready(function() {
 	    reset();
 	});
 	var simpleTooltip = d3.selectAll("#tooltipContainer");
-	    //.style("opacity", 0);
+
 
 	function getRectangularPathTopCenterPosition(d){
 	    // hack here to calculate the top center of rectangular paths
@@ -242,7 +267,7 @@ $(document).ready(function() {
 		for(var i = 0; i < options.length; i++){
 
 		    var o = options[i];
-		    var mc = simpleTooltip.select(o['tipId']);
+		    var mc = simpleTooltip.select("#" +o['varName']);
 		    
 		    mc.select(".tooltipMetricName").text(o.displayName);
 		    mc.select(".tooltipMetricValue").text(
@@ -332,3 +357,12 @@ $(document).ready(function() {
     
 });
 
+
+function updateLegend(ind /*variable being plotted*/){
+    
+    var lstr = legendStrings[ind];
+    var rects = legend.selectAll("rect")
+	.data(lstr, function(d, i){ return d + ind*10 + i;});
+    
+    /* do the rest of the work to render rects, text, etc */
+}

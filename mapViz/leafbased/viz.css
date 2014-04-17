@@ -1,16 +1,27 @@
+
+#mapContainer{
+    position: relative;
+    height: 550px;
+}
+
+#mapTitle {
+    font-weight: bold;
+    font-size: 20;
+    margin-bottom: 10px;
+}
+
 #map {
   width: 920px;
   height: 500px;
+  position: absolute;
+  top: 30px;
 }
 
-svg {
-  position: relative;
-}
 /* Fix me: this should be the same height as the map...*/
 #legend{
     position:absolute;
     left: 940px;
-    top: 200px;
+    top: 30px;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
 
@@ -30,13 +41,13 @@ path:hover {
 /* Overall container for the tooltip */
 #tooltipContainer{
     position: absolute;
-    display: block; /* set to "none" for production, "block" for debugging */
+    display: block; 
     background: dimgray;
     color: white;
     border-radius: 3px;
     padding: 10px;
     width: 300px;
-    opacity: 0.95;
+    opacity: 0;
     pointer-events: none;
 }
 .tooltipTitle{
