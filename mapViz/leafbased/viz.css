@@ -36,7 +36,7 @@ body{
    -webkit-appearance: none;
 }
 #map {
-  width: 800px;
+  width: 600px;
   height: 500px;
   position: absolute;
   top: 40px;
@@ -44,40 +44,83 @@ body{
 
 #legend{
     position:absolute;
-    left: 820px;
-    top: 40px;
+    left: 620px; /* 20 more than map width, also set offsets in js for tooltip*/
+    top: 330px;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
 
-path {
+.mappath {
   fill: #000;
   fill-opacity: .6;
   stroke: #fff;
   stroke-width: 0px;
 }
 
-path:hover {
+.mappath:hover {
   /*fill-opacity: 0.8;*/
   stroke-width: 2px;
   stroke: grey;
+}
+
+#plotContainer{
+    width: 800}
+.lineAct {
+    fill: none;
+    stroke-width: 4;
+    stroke: teal;
+    stroke-opacity: 0.3;
+}
+
+.linePred {
+    fill: none;
+    stroke-width: 3;
+    stroke: orange;
+}
+.lineCount {
+    fill: grey;
+    stroke-width: 1;
+    stroke: lightgrey;
+    
+}
+.axis line,
+.axis path {
+    stroke-width:1;
+    stroke:grey;
+    fill:none;
+}
+.axisLine{
+    //fill: none;
+    stroke: #e8e8e8;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+    }
+.axis text{
+    font-size: 10;
+    fill: #b3b3b3;
+    font-weight: normal;
+    text-transform: uppercase;
+    }
+.smallLabel{
+    font-size: 12;
 }
 
 /* Overall container for the tooltip */
 #tooltipContainer{
     position: absolute;
     display: block; 
-    background: dimgray;
-    color: white;
+    background: white;
+    color: dimgray;
     border-radius: 3px;
     padding: 10px;
     width: 275px;
-    opacity: 0.95;
+    opacity: 0;
     pointer-events: none;
 }
 .tooltipTitle{
     font-weight: bold;
     text-align: left;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    font-size: 18;
 }
 .tooltipSubTitle{
     font-weight: normal;
@@ -107,7 +150,7 @@ path:hover {
     height: 0; 
     border-right: 12px solid transparent;  /* left arrow slant */
     border-left: 12px solid transparent; /* right arrow slant */
-    border-top: 12px solid dimgray; /* bottom, add background color here */
+    border-top: 12px solid white; /* bottom, add background color here */
     font-size: 0;
     line-height: 0;
 }

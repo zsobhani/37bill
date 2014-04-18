@@ -41,8 +41,6 @@ $(document).ready(function() {
     var options = [
 	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
 	 "tipfmt": 1,
-	 "min": 0,  "minColor": "white", 
-	 "max": 50, "maxColor": "blue",
 	 "brewColor": "YlOrRd", 
 	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
@@ -85,8 +83,6 @@ $(document).ready(function() {
 
 	{"varName": "pop10", "displayName": "Population 2010",
 	 "tipfmt": 0,
-	 "min": 0,   "minColor": "white", 
-	 "max": 2000, "maxColor": "blue",
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
@@ -131,7 +127,6 @@ $(document).ready(function() {
     
     var tooltipContainer = d3.select("#tooltipContainer");
 
-    
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
     var file = "../../proc/ma_municipalities.geojson";
  
@@ -141,13 +136,13 @@ $(document).ready(function() {
     ko.applyBindings(view_model); // ko gets to work
     
     d3.json(file, function(collection){
-
+	//return; // delete to render the map again
 	
 	for(var i = 0; i < options.length; i++){
-	    var desired = options[i]['varName'];
-	    var metricArray = _(collection.features).map(function (d){ 
-		//console.log(d.properties[desired]);
-		return d.properties[desired];});
+	    // var desired = options[i]['varName'];
+	    // var metricArray = _(collection.features).map(function (d){ 
+	    // 	//console.log(d.properties[desired]);
+	    // 	return d.properties[desired];});
 
 	    // var minV = _(metricArray).min();
 	    // var maxV = _(metricArray).max();
@@ -226,11 +221,12 @@ $(document).ready(function() {
 
 	var feature = g.selectAll("path")
 	    .data(collection.features)
-	    .enter().append("path");
+	    .enter().append("path")
+	    .attr("class", "mappath");
 
 	map.on("viewreset", reset);
 	reset();
-
+	var mapOffsetsStartup = $(map.getPanes().overlayPane).offset();
 	ko.computed(function(){
 	    view_model.selectedIndex();
 	    reset();
@@ -265,14 +261,14 @@ $(document).ready(function() {
             if(!displayRequested){
 		// hide the tooltip
 		simpleTooltip
-		    .style("opacity", 0.3);
+		    .style("opacity", 0.4);
             }else{ // show the tooltip
 		
 		// set the data to display:
 		simpleTooltip.select(".tooltipTitle")
 		    .text(d.properties.municipal);
 		simpleTooltip.select(".tooltipSubtitle")
-		    .text("[" + d.properties.g250m_id +"]");
+		    .text("GRID # " + d.properties.g250m_id +"");
 		//simpleTooltip.selectAll(".tooltipMetricContainer").remove();
 		
 		for(var i = 0; i < options.length; i++){
@@ -298,7 +294,9 @@ $(document).ready(function() {
 		var offsets = getRectangularPathTopCenterPosition(d);
 		// position with respect to mouse on mouseover
 		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
-		var offsets = {"x": 980, "y": 780};
+		
+		var offsets = {"x": mapOffsetsStartup.left+600 + w/2+5, "y": mapOffsetsStartup.top+h+36};
+		
 		simpleTooltip 
 		    .style("left", ( offsets.x- w/2) + "px")     
                     .style("top", ( offsets.y-h -36) + "px");
@@ -367,11 +365,184 @@ $(document).ready(function() {
 	    
     });
 
+
+
+
+    function createSmallMult(d,widthSmall, yaxisDesired, miny, maxy){
+	
+	var side = widthSmall;
+	var axisFudge = 30*yaxisDesired;
+	var margin = {top: 10, right: 5, bottom: 30, left: (30+axisFudge)},
+	width = side - margin.left - margin.right + axisFudge,
+	height = side - margin.top - margin.bottom;
+	var svgP = d3.select("#plotContainer").selectAll("."+d.name)
+	    .data([d])
+	    .enter()
+	    .append("svg")
+	    .attr("class", d.name)
+	    .attr("width", width + margin.left +margin.right)
+	    .attr("height", height + margin.top + margin.bottom)
+	    .append("g")
+	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	var x = d3.scale.linear().range([0, width]);
+	var y = d3.scale.linear().range([height, 0]);
+	var yC = d3.scale.linear().range([height, 0])
+	    .domain([0, 50000]); // 145678 cells
+
+	var lineAct = d3.svg.line()
+	    .x(function(d) { return x(d.x); })
+	    .y(function(d) { return y(d.yAct); });
+
+	var linePred = d3.svg.line()
+	    .x(function(d) { return x(d.x); })
+	    .y(function(d) { return y(d.yModel); });
+
+	var lineCount = d3.svg.area()
+	    .x(function(d) { return x(d.x); })
+	    .y(function(d) { return yC(d.count); });
+	
+	// set the same y axis for all metrics
+	y.domain([miny, maxy]);
+	x.domain([d.ranges.start, d.ranges.end]);
+	
+	svgP.append("g")
+	    .attr("class", "x axis")
+	    .attr("transform", "translate(0, "+(height) +")")
+	    .call(d3.svg.axis()
+		  .ticks(3)
+		  .orient("bottom")
+		  //.tickSize([1,3])
+		  .scale(x));
+	if(yaxisDesired){
+	    svgP.append("g")
+		.attr("class", "y axis")
+		.attr("transform", "translate("-margin.left+", 0)")
+		.call(d3.svg.axis()
+		      .ticks(5)
+		      .orient("left")
+		      //.tickSize([1,3])
+		      .scale(y));
+	    svgP.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("y", -margin.left/2) // don't use axis because x axis is different on each graph
+		.attr("x", -height/2)
+	    .style("text-anchor", "middle")
+		.text("MPDPP");
+	    
+	}
+	// Add the line path elements. Note: the x-domain is set per element.
+	svgP.append("path")
+	    .attr("class", "lineAct")
+	    .attr("d", function(d) { 
+		//x.domain([d.ranges.start, d.ranges.end]); 
+		return lineAct(d.values); });
+	// Add the line path elements. Note: the x-domain is set per element.
+	// svgP.append("path")
+	//     .attr("class", "lineCount")
+	//     .attr("d", function(d) { 
+	// 	//x.domain([d.ranges.start, d.ranges.end]); 
+	// 	return lineCount(d.values); });
+	svgP.append("path")
+	    .attr("class", "linePred")
+	    .attr("d", function(d) { 
+		//x.domain([d.ranges.start, d.ranges.end]); 
+		return linePred(d.values); });
+	// Add a small label for the symbol name.
+	svgP.append("text")
+	    .attr("class", "smallLabel")
+	    .attr("x", width/2 -20)
+	    .attr("y", margin.top*2)
+	    .style("text-anchor", "start")
+	    .text(function(d) { return d.name; });
+	
+	    
+	}
  
     var mfile = "data/ModelSimulation.json";
             
     d3.json(mfile, function(collection){
 	console.log(collection);
+	miny = d3.min(collection, function(d){ return d.ranges.minY;});
+	maxy = d3.max(collection, function(d){ return d.ranges.maxY;});
+	
+	var small_width = 150;
+	for(var i = 0; i<collection.length; i++){
+	    var yaxisDesired = ((i%5) == 0);
+	    createSmallMult(collection[i], small_width, yaxisDesired, miny, maxy);
+	}
+
+	// //example: http://bl.ocks.org/mbostock/1157787
+	// var margin = {top: 10, right: 10, bottom: 30, left: 10},
+	// width = 150 - margin.left - margin.right,
+	// height = 150 - margin.top - margin.bottom;
+	// var svgP = d3.select("#plotContainer").selectAll("svg")
+	//     .data(collection)
+	//     .enter()
+	//     .append("svg")
+	//     .attr("width", width + margin.left +margin.right)
+	//     .attr("height", height + margin.top + margin.bottom)
+	//     .append("g")
+	//     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	// var x = d3.scale.linear().range([0, width]);
+	// var y = d3.scale.linear().range([height, 0]);
+
+	// var lineAct = d3.svg.line()
+	//     .x(function(d) { return x(d.x); })
+	//     .y(function(d) { return y(d.yAct); });
+
+	// var linePred = d3.svg.line()
+	//     .x(function(d) { return x(d.x); })
+	//     .y(function(d) { return y(d.yModel); });
+	
+	// // set the same y axis for all metrics
+	// y.domain([
+	//     d3.min(collection, function(d){ return d.ranges.minY;}),
+	//     d3.max(collection, function(d){ return d.ranges.maxY;})
+	// ]);
+	
+	// // Add the line path elements. Note: the x-domain is set per element.
+	// svgP.append("path")
+	//     .attr("class", "lineAct")
+	//     .attr("d", function(d) { 
+	// 	x.domain([d.ranges.start, d.ranges.end]); 
+	// 	return lineAct(d.values); });
+	// svgP.append("path")
+	//     .attr("class", "linePred")
+	//     .attr("d", function(d) { 
+	// 	x.domain([d.ranges.start, d.ranges.end]); 
+	// 	return linePred(d.values); });
+	// // Add a small label for the symbol name.
+	// svgP.append("text")
+	//     .attr("class", "smallLabel")
+	//     .attr("x", width/2 -20)
+	//     .attr("y", margin.top*2)
+	//     .style("text-anchor", "start")
+	//     .text(function(d) { return d.name; });
+	
+	// svgP.append("g")
+	//     .attr("class", "x axis")
+	//     .attr("transform", "translate(0, "+(height+margin.top) +")")
+	//     .call(function(d){
+	// 	x.domain([d.ranges.start, d.ranges.end]);
+	// 	return x;})
+	//     .call(d3.svg.axis()
+	// 	  .ticks(5)
+	// 	  //.tickSize([1,3])
+	// 	  .scale(x));
+
+
+	// svgP.append("g")
+	//     .attr("class", "y axis")
+	//     .attr("transform", "translate("+margin.left+", 0)")
+	//     .call(d3.svg.axis()
+	// 	  .ticks(5)
+	// 	  .orient("left")
+	// 	  //.tickSize([1,3])
+	// 	  .scale(y));
+
+
+
+
     });
     
 });
