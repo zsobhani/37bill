@@ -368,13 +368,14 @@ $(document).ready(function() {
 
 
 
-    function createSmallMult(d,widthSmall, yaxisDesired, miny, maxy){
+    function createSmallMult(d,widthSmall, yaxisDesired, allowHigher, miny, maxy){
 	
 	var side = widthSmall;
 	var axisFudge = 30*yaxisDesired;
-	var margin = {top: 10, right: 5, bottom: 30, left: (30+axisFudge)},
+	var topFudge = 40*allowHigher;
+	var margin = {top: 10+topFudge, right: 5, bottom: 30, left: (30+axisFudge)},
 	width = side - margin.left - margin.right + axisFudge,
-	height = side - margin.top - margin.bottom;
+	height = side - margin.top - margin.bottom + topFudge;
 	var svgP = d3.select("#plotContainer").selectAll("."+d.name)
 	    .data([d])
 	    .enter()
@@ -448,10 +449,11 @@ $(document).ready(function() {
 		//x.domain([d.ranges.start, d.ranges.end]); 
 		return linePred(d.values); });
 	// Add a small label for the symbol name.
+	
 	svgP.append("text")
 	    .attr("class", "smallLabel")
 	    .attr("x", width/2 -20)
-	    .attr("y", margin.top*2)
+	    .attr("y", (margin.top - topFudge)*2)
 	    .style("text-anchor", "start")
 	    .text(function(d) { return d.name; });
 	
@@ -462,13 +464,14 @@ $(document).ready(function() {
             
     d3.json(mfile, function(collection){
 	console.log(collection);
-	miny = d3.min(collection, function(d){ return d.ranges.minY;});
-	maxy = d3.max(collection, function(d){ return d.ranges.maxY;});
+	miny = 0; //d3.min(collection, function(d){ return d.ranges.minY;});
+	maxy = 30;//d3.max(collection, function(d){ return d.ranges.maxY;});
 	
 	var small_width = 150;
 	for(var i = 0; i<collection.length; i++){
 	    var yaxisDesired = ((i%5) == 0);
-	    createSmallMult(collection[i], small_width, yaxisDesired, miny, maxy);
+	    var allowHigher = i<5;
+	    createSmallMult(collection[i], small_width, yaxisDesired,allowHigher, miny, maxy);
 	}
 
 	// //example: http://bl.ocks.org/mbostock/1157787
