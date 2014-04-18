@@ -1,0 +1,126 @@
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>37 Billion Mile Challenge</title>
+    <link rel="stylesheet" href="viz.css" />
+
+    <!-- Leaflet code and stylesheets -->
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.2/leaflet.js"></script>
+
+    <script type="text/javascript" src="http://maps.stamen.com/js/tile.stamen.js?v1.2.4"></script>
+    <script src="http://code.jquery.com/jquery-1.8.2.js"></script>
+    <script src="vendor/d3.min.js"></script>
+    <script src="vendor/underscore-min.js"></script>
+    <script src="vendor/knockout-3.1.0.js"></script>
+    <script src="vendor/colorbrewer.js"></script>
+
+    <!-- Our javascript -->
+    <script src="viz.js"></script>
+  </head>
+  <body>
+    <h2> Massachusetts Grid Driving Data Analysis and Exploration</h2>
+
+<div id="plotContainer">
+  <p>
+    This series of plots shows results of our regression modeling. The blue line shows how the miles travelled varies with the actual data. The orange line shows change the model predicts, when all other variables are held constant.
+</p>
+  
+</div>
+
+    <p>The map below shows data provided by MAPC in 250m grid squares (~15 acres) for selected towns in the Boston metro area. You can select other values to be displayed on the map from the map title.</p>
+
+<p> Note the data on this map is q2 2010 data, to align most closely with the 2010 census data ignoring any grids for which there were both zero households and zero vehicles (more details from Paul here or somewhere).</p>
+<p> Our goal is to explain miles traveled per person, we explored some of the following as explaintory variables: percent population of kids, seniors, population density, side walk length, school access, number of intersections. </p>
+
+<div id="mapContainer">
+
+  <div class="styled-select">
+    <select id="metricSelection" data-bind="value: selectedIndex, valueUpdate:'input'"></select>
+  </div>
+
+  <!--<div id="mapTitle">This is the map title<ul></ul></div>-->
+  
+  <div id="map"></div>
+  <div id="legend"></div>
+</div>
+<p> Note correlation between population density, income and miles driven per person, this is pretty clear when looking at the wealthiest towns in MA (Dover and Weston, based on analysis of car values) and also the areas around Franklin Park in Boston (is this a lower income place, why is driving so low there? Is it just too terrible to drive around there?)</p>
+
+<h3> Credits </h3>
+<p>This visualization was created by Paul Schimek and Zia Sobhani.</p>
+<p>This product includes color
+specifications and designs developed by Cynthia Brewer
+(http://colorbrewer.org/).</p>
+<p>  Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.</p>
+
+<div id ="tooltipContainer">
+
+  <div class="tooltipTitleContainer">
+    <span class="tooltipTitle">Tooltip Title</span>
+    <span class="tooltipSubTitle">grid</span>
+  </div>
+  <div class="tooltipContentsContainer">
+    <div id ="MPDPP" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
+
+    <br>
+    <div id ="VehPP" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
+
+    <br>
+    <div id ="pop10" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>
+    <br>
+    <div id="co2eqv_day" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>
+<br>
+    <div id="ChildPct" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>
+<br>
+    <div id="SeniorPct" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div> 
+<br>
+    <div id="intsctnden" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div> 
+
+<br>
+    <div id="total_emp" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div> 
+<br>
+<div id="sidewlksqm" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div> 
+<br>
+<div id="schwlkindx" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
+
+<br>
+<div id="mipdaybest" class="tooltipMetricContainer"> 
+      <span class="tooltipMetricName">Measured Value</span>
+      <span class="tooltipMetricValue">2345.67</span>
+    </div>   
+  </div>
+  <div class="tooltipTail-down"></div>
+</div>
+</body>
+</html>
+
