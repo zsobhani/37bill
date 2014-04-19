@@ -100,60 +100,8 @@ $(document).ready(function() {
     
     var colorScales = [];
     var colorScalesDiscrete = [];
-    
-    for(var i = 0; i < options.length; i++){
-	var tmp = options[i];
-	options[i]['getMetric'] = function(d){
-	    return d[tmp.varName];
-	}
-	
-    }
-
-    d3.select("#metricSelection")
-	.selectAll("option")
-	.data(options)
-	.enter()
-	.append("option")
-	.attr("value", function(d,i){ return i;})
-	.text(function(d){ return d.displayName;});
-    
-    window.view_model = new ViewModel(options, 0);
-    
-    ko.computed(function(){
-	console.log("changed " +  view_model.title());
-	$("#mapTitle").text(view_model.title());
-    })
-    
-    var tooltipContainer = d3.select("#tooltipContainer");
-
-    // using this tutorial: http://bost.ocks.org/mike/leaflet/
-    var file = "data/zip_attr.geojson";
- 
-    //var file = "data/grid_attr_filtBOS4.geojson";
-    // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
-    
-    ko.applyBindings(view_model); // ko gets to work
-    
-    d3.json(file, function(collection){
-	//return; // delete to render the map again
-	
 	for(var i = 0; i < options.length; i++){
-	    // var desired = options[i]['varName'];
-	    // var metricArray = _(collection.features).map(function (d){ 
-	    // 	//console.log(d.properties[desired]);
-	    // 	return d.properties[desired];});
 
-	    // var minV = _(metricArray).min();
-	    // var maxV = _(metricArray).max();
-	    // console.log([options[i]["varName"],"min", minV,"max", maxV].join(' '));
-	    
-	    // // create a color scale for each display option
-	    // var cs = d3.scale.linear()
-	    // 	.domain([options[i].min, options[i].max])
-	    // 	.interpolate(d3.interpolateHcl)
-	    // 	.range([options[i].minColor, options[i].maxColor]);
-	 
-	    // colorScales.push(cs);
 	    var bstr = "colorbrewer."+options[i].brewColor+"[9]";
 	    
 	    var csd = d3.scale.ordinal()
@@ -175,6 +123,22 @@ $(document).ready(function() {
 
 	    
 	}
+    
+    for(var i = 0; i < options.length; i++){
+	var tmp = options[i];
+	options[i]['getMetric'] = function(d){
+	    return d[tmp.varName];
+	}
+	
+    }
+
+    d3.select("#metricSelection")
+	.selectAll("option")
+	.data(options)
+	.enter()
+	.append("option")
+	.attr("value", function(d,i){ return i;})
+	.text(function(d){ return d.displayName;});
 
 	var legend = d3.select("#legend").append("svg")
 	    .attr("width", 150).attr("height", 250);
@@ -214,6 +178,28 @@ $(document).ready(function() {
 		.text(function(d){return d;});
 	    labels.exit().remove();
 	}
+    
+    window.view_model = new ViewModel(options, 0);
+    
+    ko.computed(function(){
+	console.log("changed " +  view_model.title());
+	$("#mapTitle").text(view_model.title());
+    })
+    
+    var tooltipContainer = d3.select("#tooltipContainer");
+
+    // using this tutorial: http://bost.ocks.org/mike/leaflet/
+    var fileZip = "data/zip_attr.geojson";
+ 
+    var fileGrid = "data/grid_attr_filtBOS4.geojson";
+    // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
+    
+    ko.applyBindings(view_model); // ko gets to work
+    
+    d3.json(fileZip, function(collection){
+	//return; // delete to render the map again
+	
+
 	
 	var transform = d3.geo.transform({point: projectPoint}),
 	path = d3.geo.path().projection(transform);
