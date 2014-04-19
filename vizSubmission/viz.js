@@ -194,8 +194,23 @@ $(document).ready(function() {
     var fileGrid = "data/grid_attr_filtBOS4.geojson";
     // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
     
+    var zipJSON = null;
+    var gridJSON = null;
     ko.applyBindings(view_model); // ko gets to work
     
+    // track which zoom level we are at, track if json has been loaded
+    // switch bound features based on zoom level
+    function getZipJSON(){
+	if(zipJSON !=null){
+	    return zipJSON;
+	}else{
+	    d3.json(fileZip, function(collection){
+		
+	    });
+	    return zipJSON
+	}
+    }
+
     d3.json(fileZip, function(collection){
 	//return; // delete to render the map again
 	
@@ -208,6 +223,7 @@ $(document).ready(function() {
 	    .attr("class", "mappath");
 
 	map.on("viewreset", reset);
+	
 	reset();
 	
 	ko.computed(function(){
@@ -296,7 +312,7 @@ $(document).ready(function() {
 	
 	// Reposition the SVG to cover the features.
 	function reset() {
-	
+	    console.log(map.getZoom());
 	    var ind = view_model.selectedIndex()
 	    updateLegend(ind);
 	    
