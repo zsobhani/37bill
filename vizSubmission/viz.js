@@ -3,15 +3,6 @@ var ViewModel = function(options, selectedIndex, selectedRegion){
     this.selectedIndex = ko.observable(selectedIndex);
     this.selectedRegion = ko.observable(selectedRegion);
     
-    this.selectedMetric = ko.computed(function(){
-	return this.options[this.selectedIndex()];
-    }, this);
-    
-    this.title = ko.computed(function(){
-	var titleStr = this.selectedMetric().displayName;
-	return titleStr;
-    }, this);
-    
 }
 function getMap(greyscale, zoom, startLoc){
     if(greyscale){
@@ -109,15 +100,10 @@ var startRegion = 0;
 	 "brewColor": "YlOrRd", 
 	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
-	{"varName": "HHIncBG", 
-	 "fmtFunc": function(d){ return (parseFloat(d)/1000).toFixed(1) + "k"; },
-	 "brewColor": "Greens", 
-	 "brewCutoffs":[10000,20000, 30000, 50000,75000, 100000, 150000,200000] 
-	},
-	{"varName": "sidewlksqm", 
-	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
-	 "brewColor": "Greens", 
-	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
+	{"varName": "co2eqv_day",
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(2); },
+	 "brewColor": "Reds", 
+	 "brewCutoffs": [50, 100, 500, 1000, 1500, 2000, 3000] // should specify 8 at most
 	},
 
 	{"varName": "pop10", 
@@ -125,22 +111,48 @@ var startRegion = 0;
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
+	{"varName": "SeniorPct", 
+	 "fmtFunc": function(d){ return (parseFloat(d)*100).toFixed(0); },
+
+	 "brewColor": "Purples", 
+	 "brewCutoffs": [0.01, 0.05, .1, 0.15, .20, .25, .3] // should specify 8 at most
+	},
+	{"varName": "ChildPct", 
+	 "fmtFunc": function(d){ return (parseFloat(d)*100).toFixed(0); },
+
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
+	},
+
 	{"varName": "schwlkindx",
 	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(2); },
 	 "brewColor": "Purples", 
 	 "brewCutoffs": [0, 0.4, 0.6, 1, 2, 3, 5, 7] // should specify 8 at most
 	},
+	{"varName": "sidewlksqm", 
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
+	},
 	{"varName": "intsctnden", 
-	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(2); },
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
 	 "brewColor": "Oranges", 
 	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
 	},
 
+	
 	{"varName": "total_emp",
 	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
 	 "brewColor": "BuGn", 
 	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
 	},
+
+	{"varName": "HHIncBG", 
+	 "fmtFunc": function(d){ return (parseFloat(d)/1000).toFixed(1) + "k"; },
+	 "brewColor": "Greens", 
+	 "brewCutoffs":[10000,20000, 30000, 50000,75000, 100000, 150000,200000] 
+	},
+
 
 ]
 var temp= [
@@ -159,21 +171,6 @@ var temp= [
 	//  "brewCutoffs": [5, 10, 15, 20, 25, 30, 35, 50] // should specify 8 at most
 	// },
 
-	{"varName": "co2eqv_day",
-	 "tipfmt": 2,
-	 "brewColor": "Reds", 
-	 "brewCutoffs": [50, 100, 500, 1000, 1500, 2000, 3000] // should specify 8 at most
-	},
-	{"varName": "SeniorPct", 
-	 "tipfmt": 2,
-	 "brewColor": "Purples", 
-	 "brewCutoffs": [0.01, 0.05, .1, 0.15, .20, .25, .3] // should specify 8 at most
-	},
-	{"varName": "ChildPct", 
-	 "tipfmt": 2,
-	 "brewColor": "Greens", 
-	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
-	},
 
     ];
     
@@ -238,7 +235,7 @@ var temp= [
 	.text(getLongName);
 
 	var legend = d3.select("#legend").append("svg")
-	    .attr("width", 150).attr("height", 250);
+	    .attr("width", 150).attr("height", 210);
 
 
 	function updateLegend(ind /*variable being plotted*/){
@@ -278,10 +275,10 @@ var temp= [
     
     window.view_model = new ViewModel(options, startOption, startRegion);
     
-    ko.computed(function(){
-	console.log("changed " +  view_model.title());
-	$("#mapTitle").text(view_model.title());
-    })
+    // ko.computed(function(){
+    // 	console.log("changed " +  view_model.title());
+    // 	$("#mapTitle").text(view_model.title());
+    // })
     
     var tooltipContainer = d3.select("#tooltipContainer");
 
@@ -294,6 +291,59 @@ var temp= [
     var zipJSON = null;
     var gridJSON = null;
     ko.applyBindings(view_model); // ko gets to work
+
+    var simpleTooltip = d3.selectAll("#tooltipContainer");
+
+    function updateTooltip(d, displayRequested){
+	
+        if(!displayRequested){
+	    // hide the tooltip
+	    simpleTooltip
+		.style("opacity", 0.4);
+        }else{ // show the tooltip
+	    function getCode(d){
+		if(viewIsGrid){
+		    return("GRID # " + d.properties.g250m_id +"");
+		}else{
+		    return("Zip Code: "+ ("00000" +d.properties.zip_code).slice(-5));
+		}
+	    }
+	    // set the data to display:
+	    simpleTooltip.select(".tooltipTitle")
+		.text(d.properties.municipal);
+	    simpleTooltip.select(".tooltipSubtitle")
+		.text(getCode(d));
+	    
+	    
+	    popTooltipProgrammatically(d);
+	    
+	    // fade in the tooltip, note transition seems to result 
+	    // in the tooltip sometimes being left displayed...
+	    simpleTooltip//.transition()        
+	    //.duration(200)      
+                .style("opacity", 0.95);      
+        }
+        
+    }
+
+    function popTooltipProgrammatically(d){
+	simpleTooltip.selectAll(".tooltipMetricContainer").remove();
+	for(var i = 0; i < options.length; i++){
+	    
+	    var cc = simpleTooltip.select(".tooltipContentsContainer");
+	    
+	    var o = options[i];
+	    var div = cc.append("div").attr("class", "tooltipMetricContainer");
+	    div.append("span").attr("class","tooltipMetricName")
+		.text(getShortName(o));
+	    div.append("span").attr("class","tooltipMetricValue")
+		.text( 
+		    o.fmtFunc(d.properties[o.varName]) + " " + varNames[o.varName].units);
+	    div.append("br")
+	    
+	}
+	
+    }
     
 
     function renderCollection(collection, region){
@@ -314,119 +364,11 @@ var temp= [
 	reset();
 	
 	ko.computed(function(){
-	    view_model.selectedIndex();
+	    //view_model.selectedIndex();
 	    view_model.selectedRegion();
 	    reset();
 	});
-	var mapOffsetsStartup = $(map.getPanes().overlayPane).offset();
-	var simpleTooltip = d3.selectAll("#tooltipContainer");
 
-
-	function getRectangularPathTopCenterPosition(d){
-	    // hack here to calculate the top center of rectangular paths
-	    pointA = d.geometry.coordinates[0][0];
-	    pointB = d.geometry.coordinates[0][2];
-
-	    var point1 = map.latLngToLayerPoint(
-		new L.LatLng(pointA[1], pointA[0])); 
-	    var point2 = map.latLngToLayerPoint(
-		new L.LatLng(pointB[1], pointB[0])); 
-
-	    // get middle x value and min y value
-	    var x_pos = (point1.x + point2.x)/2;
-	    var y_pos = Math.min(point1.y, point2.y);
-	    
-	    // get the offset of the map on the page, 
-	    // using the overlay we are drawing on
-	    var mapOffsets = $(map.getPanes().overlayPane).offset();
-	    
-	    return {"x": x_pos + mapOffsets.left, 
-		    "y": y_pos + mapOffsets.top};
-	}
-
-	function updateTooltip(d, displayRequested){
-	    
-            if(!displayRequested){
-		// hide the tooltip
-		simpleTooltip
-		    .style("opacity", 0.4);
-            }else{ // show the tooltip
-		function getCode(d){
-		    if(viewIsGrid){
-			return("GRID # " + d.properties.g250m_id +"");
-		    }else{
-			return("Zip Code: "+ ("00000" +d.properties.zip_code).slice(-5));
-		    }
-		}
-		// set the data to display:
-		simpleTooltip.select(".tooltipTitle")
-		    .text(d.properties.municipal);
-		simpleTooltip.select(".tooltipSubtitle")
-		    .text(getCode(d));
-		function popTooltipById(d){ 
-		    
-		
-		    for(var i = 0; i < options.length; i++){
-			
-			var o = options[i];
-			var mc = simpleTooltip.select("#" +o['varName']);
-			
-			mc.select(".tooltipMetricName").text(getShortName(o));
-			mc.select(".tooltipMetricValue").text(
-			    d.properties[o.varName].toFixed(o.tipfmt));
-			
-		    }
-		    
-		}
-		function popTooltipProgrammatically(d){
-		    simpleTooltip.selectAll(".tooltipMetricContainer").remove();
-		    for(var i = 0; i < options.length; i++){
-			
-			var cc = simpleTooltip.select(".tooltipContentsContainer");
-			
-			var o = options[i];
-			var div = cc.append("div").attr("class", "tooltipMetricContainer");
-			div.append("span").attr("class","tooltipMetricName")
-			    .text(getShortName(o));
-			div.append("span").attr("class","tooltipMetricValue")
-			    .text( 
-				o.fmtFunc(d.properties[o.varName]) + " " + varNames[o.varName].units);
-			div.append("br")
-	
-		    }
-		    
-		}
-		// the old method
-		//popTooltipById(d);
-		popTooltipProgrammatically(d);
-		// get the dimensions dynamically if the size could change
-		var h = $("#tooltipContainer").height();
-		var w = $("#tooltipContainer").width()+10;
-		
-		// center the tail dynamically
-		simpleTooltip.select(".tooltipTail-down")
-		    .style("left", (w/2 - 29/2) + "px");
-		
-		// position of top of path rectangle relative to page
-		// above the grid cell
-		//var offsets = getRectangularPathTopCenterPosition(d);
-		// position with respect to mouse on mouseover
-		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
-		
-		var offsets = {"x": mapOffsetsStartup.left+600 + w/2+5, "y": mapOffsetsStartup.top+h+36};
-		
-		simpleTooltip 
-		    .style("left", ( offsets.x- w/2) + "px")     
-                    .style("top", ( offsets.y-h -36) + "px");
-		
-		// fade in the tooltip, note transition seems to result 
-		// in the tooltip sometimes being left displayed...
-		simpleTooltip//.transition()        
-		//.duration(200)      
-                    .style("opacity", 0.95);      
-            }
-            
-	}
 	
 	// Reposition the SVG to cover the features.
 	function reset() {

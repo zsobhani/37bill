@@ -31,6 +31,17 @@
 <p> Note that when zoomed out the map displays zip code level information. However, since the underlying data was from 250m square grid cells, we show metrics such as population as a density, so it is average population per 250mx250m grid (~15 acres).</p>
 <div id="mapContainer">
 
+<div id ="tooltipContainer">
+
+  <div class="tooltipTitleContainer">
+    <span class="tooltipTitle">Tooltip Title</span>
+    <span class="tooltipSubTitle">grid</span>
+  </div>
+  <div class="tooltipContentsContainer">
+
+  </div>
+  <!-- <div class="tooltipTail-down"></div> -->
+</div>
   
     <select id="metricSelection" data-bind="value: selectedIndex, valueUpdate:'input'"></select>
  
@@ -58,17 +69,7 @@ specifications and designs developed by Cynthia Brewer
 (http://colorbrewer.org/).</p>
 <p>  Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.</p>
 
-<div id ="tooltipContainer">
 
-  <div class="tooltipTitleContainer">
-    <span class="tooltipTitle">Tooltip Title</span>
-    <span class="tooltipSubTitle">grid</span>
-  </div>
-  <div class="tooltipContentsContainer">
-
-  </div>
-  <div class="tooltipTail-down"></div>
-</div>
 </body>
 </html>
 
