@@ -1,6 +1,6 @@
 
 p{
-    width: 900px;
+    width: 800px;
 }
 body{
     margin-left: 10px;
@@ -63,7 +63,7 @@ body{
 }
 
 #plotContainer{
-    width: 900}
+    width: 960}
 .lineAct {
     fill: none;
     stroke-width: 4;
@@ -101,7 +101,8 @@ body{
     text-transform: uppercase;
     }
 .smallLabel{
-    font-size: 12;
+    font-size: 14;
+    fill: #b3b3b3;
 }
 
 /* Overall container for the tooltip */

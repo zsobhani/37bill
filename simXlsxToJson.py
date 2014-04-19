@@ -16,15 +16,15 @@ c_aveMetric = 2 # the average of the sheet name parameter
 c_count = 3     # for histogram purposes, how many grids are in this bin.
 c_modelOut = 4  # the unnamed thing we care about
 
+# This order defines display order for small multiples
 sheet_names = [
-    'pop10', 'HHIncBG', 'OwnPct','exit_dist',
-    'ChildPct', 'SeniorPct', 
     
-    'total_emp','pbld_sqm','prow_sqm',
-    'pttlasval','ppaved_sqm', 'far_agg',
-    'intsctnden','sidewlksqm',
-    'schwlkindx',
-    'SLD_D4c']
+    'pop10','total_emp', 'HHIncBG', 'OwnPct',
+   
+    'SeniorPct', 'ChildPct', 'ppaved_sqm','pttlasval',
+    'schwlkindx','sidewlksqm','pbld_sqm','far_agg',
+    'SLD_D4c','intsctnden', 'exit_dist','prow_sqm',
+]
 sheet_vars = sheet_names
 
 
@@ -68,7 +68,7 @@ for s,v in zip(sheet_names, sheet_vars):
     ranges = getStartEndRanges(worksheet)
     out = {'values': d,
                  'ranges': ranges,
-                 'name': v
+                 'varName': v
              }
     output.append(out)
 
