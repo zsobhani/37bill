@@ -34,18 +34,26 @@ var initialZoom = 8; // 11 for boston zoom up
 var zoomThresh = 11;
 
 var viewIsGrid = false;
-    
+
+var testing = false;    
 $(document).ready(function() {
     var map = getMap(true, 8);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     gGeoJSON = svg.append("g").attr("class", "leaflet-zoom-hide");
     
-    var varNames = {"total_emp": {"max": 18422.0, "description": "Total employment.", "min": 0.0, "varName": "total_emp", "median": 0.0, "source": "InfoGroup, 2011", "stdDev": 166.19, "longName": "Employment", "units": "persons", "shortName": "Employment", "mean": 18.358}, "prow_sqm": {"max": 62490.0, "description": "Total area of road and rail rights-of-way within this grid cell.", "min": -0.07, "varName": "prow_sqm", "median": 5161.7, "source": "MassGIS Level 3 Parcel Data, MAPC analysis", "stdDev": 7444.6, "longName": "Right of Way Area", "units": "sq meter", "shortName": "Road Area", "mean": 7103.9}, "far_agg": {"max": 14.38, "description": "Building floor area divided by lot area of fee parcels (non right-of-way).  A common measure of density.", "min": 0.0, "varName": "far_agg", "median": 0.03, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 0.18831, "longName": "Floor Area Ratio", "units": "ratio", "shortName": "Floor Area Ratio", "mean": 0.081815}, "ppaved_sqm": {"max": 739200.0, "description": "Estimated paved area, in square meters, excluding roads within public rights-of-way.", "min": 0.0, "varName": "ppaved_sqm", "median": 2859.9, "source": "MassGIS Impervious Surface Data 2005, MassGIS Building Structures 2010, MassGIS Level 3 Parcels, MAPC analysis.", "stdDev": 5537.8, "longName": "Parking Lots and Driveways", "units": "sq meter", "shortName": "Parking Lots", "mean": 4391.7}, "pbld_sqm": {"max": 266480.0, "description": "Rooftop area (square meters) of all buildings in this grid cell, in square meters.", "min": 0.0, "varName": "pbld_sqm", "median": 1597.2, "source": "MassGIS Building Rooftops, 2011", "stdDev": 3295.8, "longName": "Building Footprint", "units": "sq meter", "shortName": "Building Footprint", "mean": 2716.9}, "co2eqv_day": {"max": "", "description": "Estimated CO2 Equivalence of green house gas emissions", "min": "", "varName": "co2eqv_day", "median": "", "source": "??", "stdDev": "", "longName": "CO2 Equivalent per day", "units": "CO2 per day", "shortName": "CO2 Eqv per day", "mean": ""}, "OwnPct": {"max": 1.0, "description": "Share of owned homes", "min": 0.0, "varName": "OwnPct", "median": 0.8, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.30642, "longName": "Owned housing units as a percent of all housing units.", "units": "percent", "shortName": "% Homeowners", "mean": 0.70547}, "MPDPP": {"max": 199.9, "description": "Mean miles per day per person, based on best matching inspection records and total registered passenger vehicles.", "min": 0.0, "varName": "MPDPP", "median": 12.539, "source": "Mass Vehicle Census, 2010, second quarter and 2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 22.646, "longName": "Miles of Driving per Day per Person", "units": "miles", "shortName": "Miles per Day", "mean": 17.105}, "HHIncBG": {"max": 250000.0, "description": "Median household income (2008-2012 average) of Census block group in which the grid is located.", "min": 2499.0, "varName": "HHIncBG", "median": 80197.0, "source": "ACS 2008-2012 block group summary file for Massachusetts.", "stdDev": 33853.0, "longName": "Median household income of block group", "units": "dollars", "shortName": "Income", "mean": 86174.0}, "ChildPct": {"max": 0.66, "description": "Share of children (age 5-17)", "min": 0.0, "varName": "ChildPct", "median": 0.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.026787, "longName": "Population 5 to 17 as share of total", "units": "percent", "shortName": "% Children", "mean": 0.017445}, "SeniorPct": {"max": 1.0, "description": "Share of seniors (65+)", "min": 0.0, "varName": "SeniorPct", "median": 0.09, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.12391, "longName": "Population 65+ as share of total", "units": "percent", "shortName": "% Seniors", "mean": 0.10581}, "exit_dist": {"max": 57313.0, "description": "On-road distance to nearest highway interchange (in meters?)", "min": 3.99, "varName": "exit_dist", "median": 7896.5, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 7437.4, "longName": "Highway Exit Distance", "units": "meters?", "shortName": "Highway Exit Distance", "mean": 5677.1}, "hh10": {"max": 1778.9, "description": "Households based on 2010 U.S. Census", "min": 0.01, "varName": "hh10", "median": 6.5, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 40.427, "longName": "Households, 2010", "units": "households", "shortName": "Households", "mean": 18.178}, "SLD_D4c": {"max": 3535.0, "description": "Aggregate frequency of transit service within 0.25 miles of block group boundary per hour during evening peak period\u00a0", "min": 0.0, "varName": "SLD_D4c", "median": 0.0, "source": "EPA Smart Location Database, based on GTFS data for MBTA, Massport, and 9 of the 15 RTAs in Massachusetts.", "stdDev": 123.75, "longName": "Transit Frequency within 1/4 Mile", "units": "trips per hour", "shortName": "Transit Access", "mean": 25.783}, "pop10": {"max": 3867.0, "description": "Population based on 2010 U.S. Census", "min": 1.0, "varName": "pop10", "median": 18.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 95.14, "longName": "Total population, 2010", "units": "persons", "shortName": "Population", "mean": 45.922}, "pttlasval": {"max": 1404500000.0, "description": "Total assessed value of all land, buildings, and other improvements in this grid cell, in dollars. Based on local assessing records from 2009 - 2014.", "min": 0.0, "varName": "pttlasval", "median": 2921200.0, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 18385000.0, "longName": "Total Assessed Value of All Parcels", "units": "dollars", "shortName": "Assessed Value", "mean": 6238300.0}, "sidewlksqm": {"max": 6555.7, "description": "Linear length of sidewalks in this grid cell. Sidewalks on opposite sides of a roadway are counted separately.", "min": 0.0, "varName": "sidewlksqm", "median": 0.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 683.49, "longName": "Sidewalk Density", "units": "meters?", "shortName": "Sidewalks", "mean": 319.84}, "intsctnden": {"max": 695.0, "description": "Count of roadway intersections in this grid cell.", "min": 0.0, "varName": "intsctnden", "median": 34.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 74.196, "longName": "Intersections", "units": "intersections", "shortName": "Intersections", "mean": 60.331}, "schwlkindx": {"max": 9.78, "description": "Index of school walkability developed by MAPC, based on number of public, private, or charter school grades within one mile walking distance of grid centroid", "min": 0.0, "varName": "schwlkindx", "median": 0.0, "source": "MAPC", "stdDev": 0.76835, "longName": "Schools Within a Mile", "units": "schools?", "shortName": "Schools Nearby", "mean": 0.31206}}
+    // contents here cut and paste from varNames.json, because don't want to do a 
+    // json load nesting...
+    var varNames = {"total_emp": {"max": 18422.0, "description": "Total employment.", "min": 0.0, "varName": "total_emp", "median": 0.0, "source": "InfoGroup, 2011", "stdDev": 166.19, "longName": "Employment", "units": "jobs per grid", "shortName": "Employment", "mean": 18.358}, "prow_sqm": {"max": 62490.0, "description": "Total area of road and rail rights-of-way within this grid cell.", "min": -0.07, "varName": "prow_sqm", "median": 5161.7, "source": "MassGIS Level 3 Parcel Data, MAPC analysis", "stdDev": 7444.6, "longName": "Right of Way Area", "units": "sq meter", "shortName": "Road Area", "mean": 7103.9}, "far_agg": {"max": 14.38, "description": "Building floor area divided by lot area of fee parcels (non right-of-way).  A common measure of density.", "min": 0.0, "varName": "far_agg", "median": 0.03, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 0.18831, "longName": "Floor Area Ratio", "units": "ratio", "shortName": "Floor Area Ratio", "mean": 0.081815}, "ppaved_sqm": {"max": 739200.0, "description": "Estimated paved area, in square meters, excluding roads within public rights-of-way.", "min": 0.0, "varName": "ppaved_sqm", "median": 2859.9, "source": "MassGIS Impervious Surface Data 2005, MassGIS Building Structures 2010, MassGIS Level 3 Parcels, MAPC analysis.", "stdDev": 5537.8, "longName": "Parking Lots and Driveways", "units": "sq meter", "shortName": "Parking Lots", "mean": 4391.7}, "pbld_sqm": {"max": 266480.0, "description": "Rooftop area (square meters) of all buildings in this grid cell, in square meters.", "min": 0.0, "varName": "pbld_sqm", "median": 1597.2, "source": "MassGIS Building Rooftops, 2011", "stdDev": 3295.8, "longName": "Building Footprint", "units": "sq meter", "shortName": "Building Footprint", "mean": 2716.9}, "co2eqv_day": {"max": "", "description": "Estimated CO2 Equivalence of green house gas emissions", "min": "", "varName": "co2eqv_day", "median": "", "source": "??", "stdDev": "", "longName": "CO2 Equivalent per day", "units": "", "shortName": "CO2 Eqv per day", "mean": ""}, "OwnPct": {"max": 1.0, "description": "Share of owned homes", "min": 0.0, "varName": "OwnPct", "median": 0.8, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.30642, "longName": "Owned housing units as a percent of all housing units.", "units": "%", "shortName": "% Homeowners", "mean": 0.70547}, "MPDPP": {"max": 199.9, "description": "Mean miles per day per person, based on best matching inspection records and total registered passenger vehicles.", "min": 0.0, "varName": "MPDPP", "median": 12.539, "source": "Mass Vehicle Census, 2010, second quarter and 2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 22.646, "longName": "Miles of Driving per Day per Person", "units": "miles", "shortName": "Miles per Day Per Person", "mean": 17.105}, "HHIncBG": {"max": 250000.0, "description": "Median household income (2008-2012 average) of Census block group in which the grid is located.", "min": 2499.0, "varName": "HHIncBG", "median": 80197.0, "source": "ACS 2008-2012 block group summary file for Massachusetts.", "stdDev": 33853.0, "longName": "Median household income of block group", "units": "$", "shortName": "Median Household Income", "mean": 86174.0}, "ChildPct": {"max": 0.66, "description": "Share of children (age 5-17)", "min": 0.0, "varName": "ChildPct", "median": 0.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.026787, "longName": "Population 5 to 17 as share of total", "units": "%", "shortName": "% Children", "mean": 0.017445}, "SeniorPct": {"max": 1.0, "description": "Share of seniors (65+)", "min": 0.0, "varName": "SeniorPct", "median": 0.09, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.12391, "longName": "Population 65+ as share of total", "units": "%", "shortName": "% Seniors", "mean": 0.10581}, "exit_dist": {"max": 57313.0, "description": "On-road distance to nearest highway interchange (in meters?)", "min": 3.99, "varName": "exit_dist", "median": 7896.5, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 7437.4, "longName": "Highway Exit Distance", "units": "?", "shortName": "Highway Exit Distance", "mean": 5677.1}, "hh10": {"max": 1778.9, "description": "Households based on 2010 U.S. Census", "min": 0.01, "varName": "hh10", "median": 6.5, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 40.427, "longName": "Households, 2010", "units": "households per grid", "shortName": "Households", "mean": 18.178}, "SLD_D4c": {"max": 3535.0, "description": "Aggregate frequency of transit service within 0.25 miles of block group boundary per hour during evening peak period\u00a0", "min": 0.0, "varName": "SLD_D4c", "median": 0.0, "source": "EPA Smart Location Database, based on GTFS data for MBTA, Massport, and 9 of the 15 RTAs in Massachusetts.", "stdDev": 123.75, "longName": "Transit Frequency within 1/4 Mile", "units": "trips per hour", "shortName": "Transit Access", "mean": 25.783}, "pop10": {"max": 3867.0, "description": "Population based on 2010 U.S. Census", "min": 1.0, "varName": "pop10", "median": 18.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 95.14, "longName": "Total population, 2010", "units": "persons per grid", "shortName": "Population", "mean": 45.922}, "pttlasval": {"max": 1404500000.0, "description": "Total assessed value of all land, buildings, and other improvements in this grid cell, in dollars. Based on local assessing records from 2009 - 2014.", "min": 0.0, "varName": "pttlasval", "median": 2921200.0, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 18385000.0, "longName": "Total Assessed Value of All Parcels", "units": "$", "shortName": "Assessed Value", "mean": 6238300.0}, "sidewlksqm": {"max": 6555.7, "description": "Linear length of sidewalks in this grid cell. Sidewalks on opposite sides of a roadway are counted separately.", "min": 0.0, "varName": "sidewlksqm", "median": 0.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 683.49, "longName": "Sidewalk Density", "units": "sq meter", "shortName": "Sidewalks", "mean": 319.84}, "intsctnden": {"max": 695.0, "description": "Count of roadway intersections in this grid cell.", "min": 0.0, "varName": "intsctnden", "median": 34.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 74.196, "longName": "Intersections", "units": "intersections per grid", "shortName": "Intersections", "mean": 60.331}, "schwlkindx": {"max": 9.78, "description": "Index of school walkability developed by MAPC, based on number of public, private, or charter school grades within one mile walking distance of grid centroid", "min": 0.0, "varName": "schwlkindx", "median": 0.0, "source": "MAPC", "stdDev": 0.76835, "longName": "Schools Within a Mile", "units": "?", "shortName": "Schools Nearby", "mean": 0.31206}}
 
 
+    var startRegion = 0;
 
-var regions = [
+    if(testing){
+	startRegion = 2;
+    }
+    var regions = [
+   
     {'longName': "MA by Zip Code", "shortName": "zip",
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
      'fileName': "data/zip_attr.geojson"},
@@ -53,8 +61,9 @@ var regions = [
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
      'fileName': "data/grid_attr_filtBOSMetro.geojson"},
     {'longName': "Berkshires by Grid", "shortName": "BRPC",
-     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
+     'startLoc': {'lat': 42.4061, 'lng': -72.611, 'zoom':9},
      'fileName': "data/grid_attr_filtBRPC.geojson"},
+
 ]
 
 
@@ -63,46 +72,54 @@ var regions = [
     // order here specifies order in drop down menu on map
     var options = [
 	{"varName": "MPDPP", 
-	 "tipfmt": 1,
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(1); },
 	 "brewColor": "YlOrRd", 
 	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
 	},
+	{"varName": "HHIncBG", 
+	 "fmtFunc": function(d){ return (parseFloat(d)/1000).toFixed(1) + "k"; },
+	 "brewColor": "Greens", 
+	 "brewCutoffs":[10000,20000, 30000, 50000,75000, 100000, 150000,200000] 
+	},
 	{"varName": "sidewlksqm", 
-	 "tipfmt": 0,
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
 	 "brewColor": "Greens", 
 	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
 	},
+
 	{"varName": "pop10", 
-	 "tipfmt": 0,
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
 	 "brewColor": "Blues", 
 	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
 	},
-	{"varName": "ChildPct", 
-	 "tipfmt": 2,
-	 "brewColor": "Greens", 
-	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
+	{"varName": "schwlkindx",
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(2); },
+	 "brewColor": "Purples", 
+	 "brewCutoffs": [0, 0.4, 0.6, 1, 2, 3, 5, 7] // should specify 8 at most
 	},
+	{"varName": "intsctnden", 
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(2); },
+	 "brewColor": "Oranges", 
+	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
+	},
+
+	{"varName": "total_emp",
+	 "fmtFunc": function(d){ return (parseFloat(d)).toFixed(0); },
+	 "brewColor": "BuGn", 
+	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
+	},
+
+]
+var temp= [
+	
 
 	// {"varName": "VehPP", "displayName": "Passenger Vehicles Per Person",
 	//  "tipfmt": 2,
 	//  "brewColor": "Oranges", 
 	//  "brewCutoffs": [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 5] // should specify 8 at most
 	// },
-	{"varName": "schwlkindx", 
-	 "tipfmt": 2,
-	 "brewColor": "Purples", 
-	 "brewCutoffs": [0, 0.4, 0.6, 1, 2, 3, 5, 7] // should specify 8 at most
-	},
-	{"varName": "intsctnden", 
-	 "tipfmt": 0,
-	 "brewColor": "Oranges", 
-	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
-	},
-	// {"varName": "total_emp", "displayName": "Total Employment",
-	//  "tipfmt": 2,
-	//  "brewColor": "BuGn", 
-	//  "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
-	// },
+	
+	
 	// {"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle",
 	//  "tipfmt": 2,
 	//  "brewColor": "OrRd", 
@@ -118,6 +135,11 @@ var regions = [
 	 "tipfmt": 2,
 	 "brewColor": "Purples", 
 	 "brewCutoffs": [0.01, 0.05, .1, 0.15, .20, .25, .3] // should specify 8 at most
+	},
+	{"varName": "ChildPct", 
+	 "tipfmt": 2,
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
 	},
 
     ];
@@ -221,7 +243,7 @@ var regions = [
 	    labels.exit().remove();
 	}
     
-    window.view_model = new ViewModel(options, 0);
+    window.view_model = new ViewModel(options, startRegion);
     
     ko.computed(function(){
 	console.log("changed " +  view_model.title());
@@ -305,19 +327,42 @@ var regions = [
 		    .text(d.properties.municipal);
 		simpleTooltip.select(".tooltipSubtitle")
 		    .text(getCode(d));
-			
-		//simpleTooltip.selectAll(".tooltipMetricContainer").remove();
-		
-		for(var i = 0; i < options.length; i++){
-
-		    var o = options[i];
-		    var mc = simpleTooltip.select("#" +o['varName']);
+		function popTooltipById(d){ 
 		    
-		    mc.select(".tooltipMetricName").text(getLongName(o));
-		    mc.select(".tooltipMetricValue").text(
-			d.properties[o.varName].toFixed(o.tipfmt));
-
+		
+		    for(var i = 0; i < options.length; i++){
+			
+			var o = options[i];
+			var mc = simpleTooltip.select("#" +o['varName']);
+			
+			mc.select(".tooltipMetricName").text(getShortName(o));
+			mc.select(".tooltipMetricValue").text(
+			    d.properties[o.varName].toFixed(o.tipfmt));
+			
+		    }
+		    
 		}
+		function popTooltipProgrammatically(d){
+		    simpleTooltip.selectAll(".tooltipMetricContainer").remove();
+		    for(var i = 0; i < options.length; i++){
+			
+			var cc = simpleTooltip.select(".tooltipContentsContainer");
+			
+			var o = options[i];
+			var div = cc.append("div").attr("class", "tooltipMetricContainer");
+			div.append("span").attr("class","tooltipMetricName")
+			    .text(getShortName(o));
+			div.append("span").attr("class","tooltipMetricValue")
+			    .text( 
+				o.fmtFunc(d.properties[o.varName]) + " " + varNames[o.varName].units);
+			div.append("br")
+	
+		    }
+		    
+		}
+		// the old method
+		//popTooltipById(d);
+		popTooltipProgrammatically(d);
 		// get the dimensions dynamically if the size could change
 		var h = $("#tooltipContainer").height();
 		var w = $("#tooltipContainer").width()+10;
@@ -565,7 +610,7 @@ var regions = [
  
     
     var mfile = "data/ModelSimulation.json";
-            
+    if(!testing){   //stop rendering this for now     
     d3.json(mfile, function(collection){
 	console.log(collection);
 	miny = 0; //d3.min(collection, function(d){ return d.ranges.minY;});
@@ -581,5 +626,6 @@ var regions = [
 
 
     });
+}
     
 });

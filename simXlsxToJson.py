@@ -18,7 +18,7 @@ c_modelOut = 4  # the unnamed thing we care about
 
 # This order defines display order for small multiples
 sheet_names = [
-    
+    # these are zia's pretty order, agnoizingly placed
     'pop10','total_emp', 'HHIncBG', 'OwnPct',
     'SeniorPct', 'ChildPct', 'pbld_sqm','pttlasval',
     'schwlkindx','sidewlksqm','ppaved_sqm','far_agg',
@@ -40,6 +40,7 @@ def dataFromWorksheet(worksheet):
         data.append(d)
     return data
 
+[5000, 10000, 30000, 50000, 100000, 200000, 300000] // should specify 8 at most
 def getStartEndRanges(worksheet):
     int_strings = worksheet.col_values(c_intervals, 1, -1)
     pred_val = worksheet.col_values(c_modelOut, 1, -1)
