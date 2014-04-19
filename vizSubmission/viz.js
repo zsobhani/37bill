@@ -37,7 +37,7 @@ var zoomThresh = 11;
 
 var viewIsGrid = false;
 
-var testing = true; 
+var testing = false; 
 
 var startRegion = 0;
     var startOption = 0;
@@ -49,7 +49,7 @@ var startRegion = 0;
     var regions = [
    
     {'longName': "MA by Zip Code", "shortName": "zip",
-     'startLoc': {'lat': 42.2569, 'lng': -71.57043, 'zoom':8},
+     'startLoc': {'lat': 42.03297, 'lng': -71.52648, 'zoom':8},
      'fileName': "data/zip_attr.geojson"},
     {'longName': "Boston Metro Area by Grid", "shortName": "bos",
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
