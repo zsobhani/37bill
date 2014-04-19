@@ -49,9 +49,12 @@ var regions = [
     {'longName': "MA by Zip Code", "shortName": "zip",
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
      'fileName': "data/zip_attr.geojson"},
-    {'longName': "Boston Metro Area", "shortName": "bos",
+    {'longName': "Boston Metro Area by Grid", "shortName": "bos",
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
      'fileName': "data/grid_attr_filtBOSMetro.geojson"},
+    {'longName': "Berkshires by Grid", "shortName": "BRPC",
+     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
+     'fileName': "data/grid_attr_filtBRPC.geojson"},
 ]
 
 
