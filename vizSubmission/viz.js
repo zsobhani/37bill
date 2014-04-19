@@ -34,7 +34,7 @@ $(document).ready(function() {
     var map = getMap(true, 8)//11);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
-    g = svg.append("g").attr("class", "leaflet-zoom-hide");
+    gGeoJSON = svg.append("g").attr("class", "leaflet-zoom-hide");
        
     // options should include
     // display name, min and max, color scheme, function for lookup of metric?
@@ -199,23 +199,22 @@ $(document).ready(function() {
     d3.json(fileZip, function(collection){
 	//return; // delete to render the map again
 	
-
-	
 	var transform = d3.geo.transform({point: projectPoint}),
 	path = d3.geo.path().projection(transform);
 
-	var feature = g.selectAll("path")
+	var feature = gGeoJSON.selectAll("path")
 	    .data(collection.features)
 	    .enter().append("path")
 	    .attr("class", "mappath");
 
 	map.on("viewreset", reset);
 	reset();
-	var mapOffsetsStartup = $(map.getPanes().overlayPane).offset();
+	
 	ko.computed(function(){
 	    view_model.selectedIndex();
 	    reset();
 	});
+	var mapOffsetsStartup = $(map.getPanes().overlayPane).offset();
 	var simpleTooltip = d3.selectAll("#tooltipContainer");
 
 
@@ -310,7 +309,7 @@ $(document).ready(function() {
 		.style("left", topLeft[0] + "px")
 		.style("top", topLeft[1] + "px");
 
-	    g   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
+	    gGeoJSON   .attr("transform", "translate(" + -topLeft[0] + "," + -topLeft[1] + ")");
 
 	    feature.attr("d", path);
 	    feature

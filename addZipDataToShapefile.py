@@ -99,17 +99,28 @@ def summarizeZipData(zips):
         zs['SeniorPct'] = numChildren/pop10_tot
 
         # special case municipal
-        zs['municipal'] = z[0]['municipal']
+        mstrs = [x['municipal'] for x in z 
+                 if x['municipal']!='NA'] 
+        if mstrs[0] == mstrs[-1]:
+            zs['municipal'] = mstrs[0]
+        else:
+            mstrs.sort()
+            mid = mstrs[len(mstrs)/2]
+            if(mstrs.count(mid) > len(mstrs)/2):
+                zs['municipal'] = mid
+            else:
+                zs['municipal'] = mid
+                print "problem ",z[0]['zip_code']#,  mstrs
         zipsSummary[int(z[0]['zip_code'])] = zs
         ###break
     return zipsSummary
 
 zipsSummary = summarizeZipData(zips)
-print zipsSummary
+#print zipsSummary
 
 
 sf = shapefile.Editor(sfBase)
-print sf
+#print sf
 def addField(name, widthMinusPrecision,precision = 3, default = 0): #assumes precision of 1
     sf.field(name, 'N', widthMinusPrecision+precision+1, precision)
     # Zero pad new data all the way down to keep the shape file "in shape" :)
@@ -118,7 +129,7 @@ def addField(name, widthMinusPrecision,precision = 3, default = 0): #assumes pre
     return
 
 def addStringField(name):
-    sf.field(name, 'C', 12, 0)
+    sf.field(name, 'C', 20, 0)
     # Empty pad new data all the way down to keep the shape file "in shape" :)
     for r in sf.records:
         r.append("") # can't over write, so don't do this
@@ -150,7 +161,7 @@ for r in sf.records:
     zipId = int(r[zipIndex])
     ## DO WHAT THEY DO IF THEY MATCH
     if zipId in zipsSummary:
-        print zipsSummary[zipId]
+        #print zipsSummary[zipId]
         zs = zipsSummary[zipId]
         for f in myFields:
             metric = zs[f]
