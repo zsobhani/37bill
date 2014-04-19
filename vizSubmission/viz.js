@@ -1,5 +1,5 @@
-var ViewModel = function(options, selectedIndex, selectedRegion){
-    this.options = options;
+var ViewModel = function(selectedIndex, selectedRegion){
+    
     this.selectedIndex = ko.observable(selectedIndex);
     this.selectedRegion = ko.observable(selectedRegion);
     
@@ -19,6 +19,11 @@ function getMap(greyscale, zoom, startLoc){
 		.addLayer(new L.TileLayer("http://{s}.tiles.mapbox.com/v3/examples.map-vyofok3q/{z}/{x}/{y}.png"));
     }
 
+    
+    function printCoords(){
+	console.log(map.getCenter());
+    }
+    map.on("dragend", printCoords);
     return map;
 }
 
@@ -273,7 +278,7 @@ var temp= [
 	    labels.exit().remove();
 	}
     
-    window.view_model = new ViewModel(options, startOption, startRegion);
+    window.view_model = new ViewModel(startOption, startRegion);
     
     // ko.computed(function(){
     // 	console.log("changed " +  view_model.title());
@@ -344,36 +349,25 @@ var temp= [
 	}
 	
     }
+    var currentViewReset = null;
+
+    var global_collection = null
+    var global_feature = null;
+    var global_path = null;
     
+    ko.computed(function(){
+	view_model.selectedIndex();
+	//	    view_model.selectedRegion();
+	if (global_collection && global_feature && global_path) {
+	    resetWithCollection(global_collection, global_feature, global_path);
+	}
+    });
 
-    function renderCollection(collection, region){
-	var transform = d3.geo.transform({point: projectPoint}),
-	path = d3.geo.path().projection(transform);
-	gGeoJSON.selectAll("path").remove();
-	var feature = gGeoJSON.selectAll("path")
-	    .data(collection.features)
-	    .enter().append("path")
-	    .attr("class", "mappath");
-
-	map.setView(new L.LatLng(region.lat, region.lng), region.zoom);
-	map.on("viewreset", reset);
-	map.on("dragend", function(){
-	    console.log(map.getCenter());
-//	    console.log(map.zoom());
-	});
-	reset();
-	
-	ko.computed(function(){
-	    //view_model.selectedIndex();
-	    view_model.selectedRegion();
-	    reset();
-	});
-
-	
+    function resetWithCollection(collection, feature, path){
 	// Reposition the SVG to cover the features.
-	function reset() {
+	
 	    console.log("reset called!: " + map.getZoom());
-	    var ind = view_model.selectedIndex()
+	    var ind = view_model.selectedIndex();
 	    
 	    updateLegend(ind);
 	    
@@ -415,8 +409,33 @@ var temp= [
 	    
 	}
 	
+    function renderCollection(collection, region){
+	map.setView(new L.LatLng(region.lat, region.lng), region.zoom);
+	
+	var transform = d3.geo.transform({point: projectPoint}),
+	path = d3.geo.path().projection(transform);
+	gGeoJSON.selectAll("path").remove();
+	var feature = gGeoJSON.selectAll("path")
+	    .data(collection.features)
+	    .enter().append("path")
+	    .attr("class", "mappath");
 
+	global_collection = collection;
+	global_feature = feature;
+	global_path = path;
 
+	if(currentViewReset){
+	    map.off("viewreset", currentViewReset);
+	}
+	map.on("viewreset", reset);
+	currentViewReset = reset;
+
+	reset();
+	
+	function reset() {
+	    resetWithCollection(collection, feature, path);
+	}
+	
 	// Use Leaflet to implement a D3 geometric transformation.
 	function projectPoint(x, y) {
 	    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
@@ -425,6 +444,7 @@ var temp= [
 	}
 	
     }
+
     ko.computed(function(){
 	var reg = view_model.selectedRegion();
 	console.log("selected Region # " + reg);
