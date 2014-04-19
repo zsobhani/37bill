@@ -90,19 +90,19 @@ body{
 }
 .axisLine{
     //fill: none;
-    stroke: #e8e8e8;
+    stroke: #4e4e4e;
     stroke-width: 1;
     shape-rendering: crispEdges;
     }
 .axis text{
     font-size: 10;
-    fill: #b3b3b3;
+    fill: #4e4e4e;
     font-weight: normal;
     text-transform: uppercase;
     }
 .smallLabel{
     font-size: 14;
-    fill: #b3b3b3;
+    fill: #4e4e4e;
 }
 
 /* Overall container for the tooltip */
