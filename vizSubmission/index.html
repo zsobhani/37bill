@@ -21,6 +21,7 @@
   <body>
     <h2> Massachusetts Grid Driving Data Analysis and Exploration</h2>
 
+
 <div id="plotContainer">
   <p>
     This series of plots shows results of our regression modeling. The blue line shows how the miles travelled varies with the actual data. The orange line shows change the model predicts, when all other variables are held constant.
@@ -33,6 +34,7 @@
 <p> Note the data on this map is q2 2010 data, to align most closely with the 2010 census data ignoring any grids for which there were both zero households and zero vehicles (more details from Paul here or somewhere).</p>
 <p> Our goal is to explain miles traveled per person, we explored some of the following as explaintory variables: percent population of kids, seniors, population density, side walk length, school access, number of intersections. </p>
 
+<p> Note that when zoomed out the map displays zip code level information. However, since the underlying data was from 250m square grid cells, we show metrics such as population as a density, so it is average population per 250mx250m grid (~15 acres).</p>
 <div id="mapContainer">
 
   <div class="styled-select">

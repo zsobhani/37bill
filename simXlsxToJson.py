@@ -4,7 +4,7 @@ import xlrd
 import json
 
 xfile = "proc/ModelSimulation.xlsx"
-ofile = "mapViz/leafbased/data/ModelSimulation.json"
+ofile = "vizSubmission/data/ModelSimulation.json"
 
 workbook = xlrd.open_workbook(xfile)
 print workbook.sheet_names()

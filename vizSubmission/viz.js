@@ -31,7 +31,7 @@ function getMap(greyscale, zoom){
 }
 
 $(document).ready(function() {
-    var map = getMap(true, 11);
+    var map = getMap(true, 8)//11);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     g = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -39,21 +39,31 @@ $(document).ready(function() {
     // options should include
     // display name, min and max, color scheme, function for lookup of metric?
     var options = [
-	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
-	 "tipfmt": 1,
-	 "brewColor": "YlOrRd", 
-	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
-	},
-	{"varName": "VehPP", "displayName": "Passenger Vehicles Per Person",
-	 "tipfmt": 2,
-	 "brewColor": "Oranges", 
-	 "brewCutoffs": [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 5] // should specify 8 at most
-	},
 	{"varName": "sidewlksqm", "displayName": "Length of Sidewalks",
 	 "tipfmt": 0,
 	 "brewColor": "Greens", 
 	 "brewCutoffs": [100, 500, 1000, 1500, 2000, 3000, 4000] // should specify 8 at most
 	},
+	{"varName": "pop10", "displayName": "Population 2010",
+	 "tipfmt": 0,
+	 "brewColor": "Blues", 
+	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
+	},
+	{"varName": "ChildPct", "displayName": "Population % Children",
+	 "tipfmt": 2,
+	 "brewColor": "Greens", 
+	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
+	},
+	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
+	 "tipfmt": 1,
+	 "brewColor": "YlOrRd", 
+	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
+	},
+	// {"varName": "VehPP", "displayName": "Passenger Vehicles Per Person",
+	//  "tipfmt": 2,
+	//  "brewColor": "Oranges", 
+	//  "brewCutoffs": [0, 0.2, 0.4, 0.6, 0.8, 1, 2, 5] // should specify 8 at most
+	// },
 	{"varName": "schwlkindx", "displayName": "School Walk Index",
 	 "tipfmt": 2,
 	 "brewColor": "Purples", 
@@ -64,32 +74,21 @@ $(document).ready(function() {
 	 "brewColor": "Oranges", 
 	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
 	},
-	{"varName": "total_emp", "displayName": "Total Employment",
-	 "tipfmt": 2,
-	 "brewColor": "BuGn", 
-	 "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
-	},
-	{"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle",
-	 "tipfmt": 2,
-	 "brewColor": "OrRd", 
-	 "brewCutoffs": [5, 10, 15, 20, 25, 30, 35, 50] // should specify 8 at most
-	},
+	// {"varName": "total_emp", "displayName": "Total Employment",
+	//  "tipfmt": 2,
+	//  "brewColor": "BuGn", 
+	//  "brewCutoffs": [25, 50, 100, 150, 200, 300, 400, 500] // should specify 8 at most
+	// },
+	// {"varName": "mipdaybest", "displayName": "Miles per Day per Vehicle",
+	//  "tipfmt": 2,
+	//  "brewColor": "OrRd", 
+	//  "brewCutoffs": [5, 10, 15, 20, 25, 30, 35, 50] // should specify 8 at most
+	// },
 
 	{"varName": "co2eqv_day", "displayName": "CO2 Eqivalent per Day",
 	 "tipfmt": 2,
 	 "brewColor": "Reds", 
 	 "brewCutoffs": [50, 100, 500, 1000, 1500, 2000, 3000] // should specify 8 at most
-	},
-
-	{"varName": "pop10", "displayName": "Population 2010",
-	 "tipfmt": 0,
-	 "brewColor": "Blues", 
-	 "brewCutoffs": [10, 50, 75, 100, 200, 300, 500, 1000]
-	},
-	{"varName": "ChildPct", "displayName": "Population % Children",
-	 "tipfmt": 2,
-	 "brewColor": "Greens", 
-	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
 	},
 	{"varName": "SeniorPct", "displayName": "Population % over 65",
 	 "tipfmt": 2,
@@ -128,9 +127,9 @@ $(document).ready(function() {
     var tooltipContainer = d3.select("#tooltipContainer");
 
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
-    var file = "../../proc/ma_municipalities.geojson";
+    var file = "data/zip_attr.geojson";
  
-    var file = "data/grid_attr_filtBOS4.geojson";
+    //var file = "data/grid_attr_filtBOS4.geojson";
     // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
     
     ko.applyBindings(view_model); // ko gets to work
@@ -291,7 +290,7 @@ $(document).ready(function() {
 		
 		// position of top of path rectangle relative to page
 		// above the grid cell
-		var offsets = getRectangularPathTopCenterPosition(d);
+		//var offsets = getRectangularPathTopCenterPosition(d);
 		// position with respect to mouse on mouseover
 		// var offsets = {"x": d3.event.pageX, "y": d3.event.pageY };
 		
