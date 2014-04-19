@@ -518,12 +518,13 @@ $(document).ready(function() {
     d3.json(mfile, function(collection){
 	console.log(collection);
 	miny = 0; //d3.min(collection, function(d){ return d.ranges.minY;});
-	maxy = 30;//d3.max(collection, function(d){ return d.ranges.maxY;});
+	maxy = 40;//d3.max(collection, function(d){ return d.ranges.maxY;});
 	
-	var small_width = 150;
+	var small_width = 200;
+	var num_per_row = 4;
 	for(var i = 0; i<collection.length; i++){
-	    var yaxisDesired = ((i%5) == 0);
-	    var allowHigher = i<5;
+	    var yaxisDesired = ((i%num_per_row) == 0);
+	    var allowHigher = i<num_per_row;
 	    createSmallMult(collection[i], small_width, yaxisDesired,allowHigher, miny, maxy);
 	}
 

@@ -3,7 +3,7 @@
 import xlrd
 import json
 
-xfile = "proc/ModelSimulation.xlsx"
+xfile = "proc/ModelSimulation2.xlsx"
 ofile = "vizSubmission/data/ModelSimulation.json"
 
 workbook = xlrd.open_workbook(xfile)
@@ -16,9 +16,15 @@ c_aveMetric = 2 # the average of the sheet name parameter
 c_count = 3     # for histogram purposes, how many grids are in this bin.
 c_modelOut = 4  # the unnamed thing we care about
 
-sheet_names = ['SeniorPct', 'pop10', 'hh10','total_emp','pbld_sqm','prow_sqm',
-               'pttlasval','ppaved_sqm', 'far_agg','intsctnden','sidewlksqm',
-               'HHIncBG', 'SLD_D4c']
+sheet_names = [
+    'pop10', 'HHIncBG', 'OwnPct','exit_dist',
+    'ChildPct', 'SeniorPct', 
+    
+    'total_emp','pbld_sqm','prow_sqm',
+    'pttlasval','ppaved_sqm', 'far_agg',
+    'intsctnden','sidewlksqm',
+    'schwlkindx',
+    'SLD_D4c']
 sheet_vars = sheet_names
 
 

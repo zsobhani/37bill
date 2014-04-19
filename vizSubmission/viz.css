@@ -1,6 +1,6 @@
 
 p{
-    width: 800px;
+    width: 900px;
 }
 body{
     margin-left: 10px;
@@ -63,7 +63,7 @@ body{
 }
 
 #plotContainer{
-    width: 800}
+    width: 900}
 .lineAct {
     fill: none;
     stroke-width: 4;
