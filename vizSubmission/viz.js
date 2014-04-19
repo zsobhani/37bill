@@ -29,9 +29,13 @@ function getMap(greyscale, zoom){
 
     return map;
 }
+var initialZoom = 8; // 11 for boston zoom up
+var zoomThresh = 11;
 
+var viewIsGrid = false;
+    
 $(document).ready(function() {
-    var map = getMap(true, 8)//11);
+    var map = getMap(true, 8);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     gGeoJSON = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -39,6 +43,11 @@ $(document).ready(function() {
     // options should include
     // display name, min and max, color scheme, function for lookup of metric?
     var options = [
+	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
+	 "tipfmt": 1,
+	 "brewColor": "YlOrRd", 
+	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
+	},
 	{"varName": "sidewlksqm", "displayName": "Length of Sidewalks",
 	 "tipfmt": 0,
 	 "brewColor": "Greens", 
@@ -54,11 +63,7 @@ $(document).ready(function() {
 	 "brewColor": "Greens", 
 	 "brewCutoffs": [0.01, .02, .03, .04, 0.05, .1, 0.15, .20] // should specify 8 at most
 	},
-	{"varName": "MPDPP", "displayName": "Miles Per Day Per Person",
-	 "tipfmt": 1,
-	 "brewColor": "YlOrRd", 
-	 "brewCutoffs": [2.5, 5, 10, 15, 20, 30, 50, 80] // should specify 8 at most
-	},
+
 	// {"varName": "VehPP", "displayName": "Passenger Vehicles Per Person",
 	//  "tipfmt": 2,
 	//  "brewColor": "Oranges", 
@@ -198,25 +203,11 @@ $(document).ready(function() {
     var gridJSON = null;
     ko.applyBindings(view_model); // ko gets to work
     
-    // track which zoom level we are at, track if json has been loaded
-    // switch bound features based on zoom level
-    function getZipJSON(){
-	if(zipJSON !=null){
-	    return zipJSON;
-	}else{
-	    d3.json(fileZip, function(collection){
-		
-	    });
-	    return zipJSON
-	}
-    }
 
-    d3.json(fileZip, function(collection){
-	//return; // delete to render the map again
-	
+    function renderCollection(collection){
 	var transform = d3.geo.transform({point: projectPoint}),
 	path = d3.geo.path().projection(transform);
-
+	gGeoJSON.selectAll("path").remove();
 	var feature = gGeoJSON.selectAll("path")
 	    .data(collection.features)
 	    .enter().append("path")
@@ -263,12 +254,19 @@ $(document).ready(function() {
 		simpleTooltip
 		    .style("opacity", 0.4);
             }else{ // show the tooltip
-		
+		function getCode(d){
+		    if(viewIsGrid){
+			return("GRID # " + d.properties.g250m_id +"");
+		    }else{
+			return("Zip Code: "+ ("00000" +d.properties.zip_code).slice(-5));
+		    }
+		}
 		// set the data to display:
 		simpleTooltip.select(".tooltipTitle")
 		    .text(d.properties.municipal);
 		simpleTooltip.select(".tooltipSubtitle")
-		    .text("GRID # " + d.properties.g250m_id +"");
+		    .text(getCode(d));
+			
 		//simpleTooltip.selectAll(".tooltipMetricContainer").remove();
 		
 		for(var i = 0; i < options.length; i++){
@@ -300,11 +298,11 @@ $(document).ready(function() {
 		simpleTooltip 
 		    .style("left", ( offsets.x- w/2) + "px")     
                     .style("top", ( offsets.y-h -36) + "px");
-	
+		
 		// fade in the tooltip, note transition seems to result 
 		// in the tooltip sometimes being left displayed...
 		simpleTooltip//.transition()        
-		    //.duration(200)      
+		//.duration(200)      
                     .style("opacity", 0.95);      
             }
             
@@ -351,22 +349,77 @@ $(document).ready(function() {
 		.on("mouseout", function(d){
 		    updateTooltip(d, false);
 		});
-	
+	    
 	}
 	
 
 
-		// Use Leaflet to implement a D3 geometric transformation.
+	// Use Leaflet to implement a D3 geometric transformation.
 	function projectPoint(x, y) {
 	    var point = map.latLngToLayerPoint(new L.LatLng(y, x));
 	    this.stream.point(point.x, point.y);
 	    //console.log("this is point" + point);
 	}
+	
+    }
+    
+    // track which zoom level we are at, track if json has been loaded
+    // switch bound features based on zoom level
+    function renderZipJSON(){
+	if(zipJSON !=null){
+	    renderCollection(zipJSON);
+	}else{
+	    d3.json(fileZip, function(collection){
+		renderCollection(collection)
+		zipJSON = collection;
+	    });
 	    
+	}
+    }
+    
+ // track which zoom level we are at, track if json has been loaded
+    // switch bound features based on zoom level
+    function renderGridJSON(){
+	if(gridJSON !=null){
+	    renderCollection(gridJSON);
+	}else{
+	    d3.json(fileGrid, function(collection){
+		renderCollection(collection)
+		gridJSON = collection;
+	    });
+	    
+	}
+    }
+    
+    renderZipJSON();
+    map.on("zoomend", function(){
+	console.log("zoomStart: " + map.getZoom());
+	if(map.getZoom() > zoomThresh){
+	    if(viewIsGrid){
+		// do nothing
+	    }else{
+		renderGridJSON();
+		viewIsGrid = true;
+	    }
+	    // not hysteresis on zoom, no change on threshold!
+	}else if (map.getZoom() < zoomThresh){
+	    if(viewIsGrid){
+		renderZipJSON();
+		viewIsGrid = false;
+	    }else{
+		// do nothing
+	    }
+	}
+	
+	
+	console.log("zoomStartAfter: " + map.getZoom());
     });
+    map.on("zoomstart", function(){
 
-
-
+	console.log("zoomend" + map.getZoom());
+    });
+    
+		  
 
     function createSmallMult(d,widthSmall, yaxisDesired, allowHigher, miny, maxy){
 	

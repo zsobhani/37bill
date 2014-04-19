@@ -13,31 +13,33 @@ import math
 
 sfBase = "data/companion/Spatial/ma_zipcodes_poly.shp"
 
-csvfile = open("proc/GridAnalysisFinal.csv",'r')
+csvfile = open("proc/GridAnalysisFinal3.csv",'r')
 data = csv.DictReader(csvfile) #read the data in as a dictionary
 # Could work with only what we care about if too slow:
 
 # TODO, add these other fields?
 # Process MPDPP better to account for population?
 myFields = ['MPDPP',
+            #'VehPP',
             'ChildPct',
             'SeniorPct',
             'OwnPct',
             'pop10',
             'hh10',
-           # 'total_emp',
-           # 'pbld_sqm',
-           # 'prow_sqm',
-           # 'pttlasval',
-           # 'ppaved_sqm',
-           # 'far_agg',
+            'total_emp',
+            'pbld_sqm',
+            'prow_sqm',
+            'pttlasval',
+            'ppaved_sqm',
+            'far_agg',
             'intsctnden',
             'sidewlksqm',
             'schwlkindx',
             'exit_dist', 
             'HHIncBG',
-            #'SLD_D4c',
+            'SLD_D4c',
             'co2eqv_day', 
+            'zip_code',
 ]
 
 # organize all data by zip code:
@@ -85,10 +87,16 @@ def summarizeZipData(zips):
         # overwrite simple average with better average 
         # in a few cases:
 
-        # MPDPP
+
         
         pop10_raw = [float(r['pop10']) for r in z]
         pop10_tot = sum(pop10_raw)
+        
+        # MPDPP
+        mpdpp_raw = [float(r['MPDPP']) for r in z]
+        sum_mpdpp = sum([m*pr for (m, pr) in zip(mpdpp_raw, pop10_raw)])
+        mpdpp = sum_mpdpp/pop10_tot
+
         ChildPct_raw = [float(r['ChildPct']) for r in z]
         numChildren = sum([cp*pr for (cp, pr) in zip(ChildPct_raw, pop10_raw)])
         zs['ChildPct'] = numChildren/pop10_tot
