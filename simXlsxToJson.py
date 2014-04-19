@@ -20,9 +20,8 @@ c_modelOut = 4  # the unnamed thing we care about
 sheet_names = [
     
     'pop10','total_emp', 'HHIncBG', 'OwnPct',
-   
-    'SeniorPct', 'ChildPct', 'ppaved_sqm','pttlasval',
-    'schwlkindx','sidewlksqm','pbld_sqm','far_agg',
+    'SeniorPct', 'ChildPct', 'pbld_sqm','pttlasval',
+    'schwlkindx','sidewlksqm','ppaved_sqm','far_agg',
     'SLD_D4c','intsctnden', 'exit_dist','prow_sqm',
 ]
 sheet_vars = sheet_names
