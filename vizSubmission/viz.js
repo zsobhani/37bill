@@ -64,6 +64,11 @@ $(document).ready(function() {
      'startLoc': {'lat': 42.4061, 'lng': -72.611, 'zoom':9},
      'fileName': "data/grid_attr_filtBRPC.geojson"},
 
+    {'longName': "Cape and the Islands by Grid", "shortName": "Cape",
+     'startLoc': {'lat': 41.9912, 'lng': -70.72448, 'zoom':9},
+
+     'fileName': "data/grid_attr_filtCape.geojson"},
+
 ]
 
 
@@ -274,7 +279,10 @@ var temp= [
 
 	map.setView(new L.LatLng(region.lat, region.lng), region.zoom);
 	map.on("viewreset", reset);
-	
+	map.on("dragend", function(){
+	    console.log(map.getCenter());
+	    console.log(map.zoom());
+	});
 	reset();
 	
 	ko.computed(function(){
