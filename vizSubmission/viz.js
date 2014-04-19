@@ -13,13 +13,13 @@ var ViewModel = function(options, selectedIndex, selectedRegion){
     }, this);
     
 }
-function getMap(greyscale, zoom){
+function getMap(greyscale, zoom, startLoc){
     if(greyscale){
 	// http://maps.stamen.com/#toner/10/42.3810/-71.5113
 	var layer = new L.StamenTileLayer("toner-lite");
 	var map = new L.Map("map", {
-	    center: new L.LatLng(42.355, -71.11),
-	    zoom: zoom
+	    center: new L.LatLng(startLoc.lat, startLoc.lng),
+	    zoom: startLoc.zoom
 	});
 	map.addLayer(layer);
     }else{
@@ -30,14 +30,65 @@ function getMap(greyscale, zoom){
 
     return map;
 }
+
+$(document).ready(function() {
 var initialZoom = 8; // 11 for boston zoom up
 var zoomThresh = 11;
 
 var viewIsGrid = false;
 
-var testing = false;    
-$(document).ready(function() {
-    var map = getMap(true, 8);
+var testing = true; 
+
+var startRegion = 0;
+    var startOption = 0;
+
+    if(testing){
+	startRegion = 0;
+    }   
+
+    var regions = [
+   
+    {'longName': "MA by Zip Code", "shortName": "zip",
+     'startLoc': {'lat': 42.2569, 'lng': -71.57043, 'zoom':8},
+     'fileName': "data/zip_attr.geojson"},
+    {'longName': "Boston Metro Area by Grid", "shortName": "bos",
+     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
+     'fileName': "data/grid_attr_filtBOSMetro.geojson"},
+	{'longName': "MAPC by Grid", "shortName": "mapc",
+     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
+     'fileName': "data/grid_attr_filtMAPC.geojson"},
+    // {'longName': "Berkshires by Grid", "shortName": "BRPC",
+    //  'startLoc': {'lat': 42.4061, 'lng': -72.611, 'zoom':9},
+    //  'fileName': "data/grid_attr_filtBRPC.geojson"},
+
+    // {'longName': "Cape and the Islands by Grid", "shortName": "Cape",
+    //  'startLoc': {'lat': 41.9912, 'lng': -70.72448, 'zoom':9},
+    //  'fileName': "data/grid_attr_filtCape.geojson"},
+
+	// todo, combine with cape and islands
+	{'longName': "South East MA by Grid", "shortName": "Southeast",
+     'startLoc': {'lat': 41.722, 'lng': -70.6503, 'zoom':9},
+     'fileName': "data/grid_attr_filtSoutheast.geojson"},
+	
+	{'longName': "North East MA by Grid", "shortName": "Northeast",
+     'startLoc': {'lat': 42.65214, 'lng': -70.9867, 'zoom':10},
+     'fileName': "data/grid_attr_filtNortheast.geojson"},
+	
+	{'longName': "Central MA by Grid", "shortName": "Central",
+     'startLoc': {'lat': 42.322, 'lng': -71.84783, 'zoom':9},
+     'fileName': "data/grid_attr_filtCentral.geojson"},
+	
+	{'longName': "Western MA by Grid", "shortName": "West",
+     'startLoc': {'lat': 42.3382, 'lng': -72.7377, 'zoom':9},
+     'fileName': "data/grid_attr_filtWestern.geojson"},
+
+
+
+]
+
+
+
+    var map = getMap(true, 8, regions[startRegion].startLoc);
 
     var svg = d3.select(map.getPanes().overlayPane).append("svg"),
     gGeoJSON = svg.append("g").attr("class", "leaflet-zoom-hide");
@@ -47,30 +98,7 @@ $(document).ready(function() {
     var varNames = {"total_emp": {"max": 18422.0, "description": "Total employment.", "min": 0.0, "varName": "total_emp", "median": 0.0, "source": "InfoGroup, 2011", "stdDev": 166.19, "longName": "Employment", "units": "jobs per grid", "shortName": "Employment", "mean": 18.358}, "prow_sqm": {"max": 62490.0, "description": "Total area of road and rail rights-of-way within this grid cell.", "min": -0.07, "varName": "prow_sqm", "median": 5161.7, "source": "MassGIS Level 3 Parcel Data, MAPC analysis", "stdDev": 7444.6, "longName": "Right of Way Area", "units": "sq meter", "shortName": "Road Area", "mean": 7103.9}, "far_agg": {"max": 14.38, "description": "Building floor area divided by lot area of fee parcels (non right-of-way).  A common measure of density.", "min": 0.0, "varName": "far_agg", "median": 0.03, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 0.18831, "longName": "Floor Area Ratio", "units": "ratio", "shortName": "Floor Area Ratio", "mean": 0.081815}, "ppaved_sqm": {"max": 739200.0, "description": "Estimated paved area, in square meters, excluding roads within public rights-of-way.", "min": 0.0, "varName": "ppaved_sqm", "median": 2859.9, "source": "MassGIS Impervious Surface Data 2005, MassGIS Building Structures 2010, MassGIS Level 3 Parcels, MAPC analysis.", "stdDev": 5537.8, "longName": "Parking Lots and Driveways", "units": "sq meter", "shortName": "Parking Lots", "mean": 4391.7}, "pbld_sqm": {"max": 266480.0, "description": "Rooftop area (square meters) of all buildings in this grid cell, in square meters.", "min": 0.0, "varName": "pbld_sqm", "median": 1597.2, "source": "MassGIS Building Rooftops, 2011", "stdDev": 3295.8, "longName": "Building Footprint", "units": "sq meter", "shortName": "Building Footprint", "mean": 2716.9}, "co2eqv_day": {"max": "", "description": "Estimated CO2 Equivalence of green house gas emissions", "min": "", "varName": "co2eqv_day", "median": "", "source": "??", "stdDev": "", "longName": "CO2 Equivalent per day", "units": "", "shortName": "CO2 Eqv per day", "mean": ""}, "OwnPct": {"max": 1.0, "description": "Share of owned homes", "min": 0.0, "varName": "OwnPct", "median": 0.8, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.30642, "longName": "Owned housing units as a percent of all housing units.", "units": "%", "shortName": "% Homeowners", "mean": 0.70547}, "MPDPP": {"max": 199.9, "description": "Mean miles per day per person, based on best matching inspection records and total registered passenger vehicles.", "min": 0.0, "varName": "MPDPP", "median": 12.539, "source": "Mass Vehicle Census, 2010, second quarter and 2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 22.646, "longName": "Miles of Driving per Day per Person", "units": "miles", "shortName": "Miles per Day Per Person", "mean": 17.105}, "HHIncBG": {"max": 250000.0, "description": "Median household income (2008-2012 average) of Census block group in which the grid is located.", "min": 2499.0, "varName": "HHIncBG", "median": 80197.0, "source": "ACS 2008-2012 block group summary file for Massachusetts.", "stdDev": 33853.0, "longName": "Median household income of block group", "units": "$", "shortName": "Median Household Income", "mean": 86174.0}, "ChildPct": {"max": 0.66, "description": "Share of children (age 5-17)", "min": 0.0, "varName": "ChildPct", "median": 0.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.026787, "longName": "Population 5 to 17 as share of total", "units": "%", "shortName": "% Children", "mean": 0.017445}, "SeniorPct": {"max": 1.0, "description": "Share of seniors (65+)", "min": 0.0, "varName": "SeniorPct", "median": 0.09, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 0.12391, "longName": "Population 65+ as share of total", "units": "%", "shortName": "% Seniors", "mean": 0.10581}, "exit_dist": {"max": 57313.0, "description": "On-road distance to nearest highway interchange (in meters?)", "min": 3.99, "varName": "exit_dist", "median": 7896.5, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 7437.4, "longName": "Highway Exit Distance", "units": "?", "shortName": "Highway Exit Distance", "mean": 5677.1}, "hh10": {"max": 1778.9, "description": "Households based on 2010 U.S. Census", "min": 0.01, "varName": "hh10", "median": 6.5, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 40.427, "longName": "Households, 2010", "units": "households per grid", "shortName": "Households", "mean": 18.178}, "SLD_D4c": {"max": 3535.0, "description": "Aggregate frequency of transit service within 0.25 miles of block group boundary per hour during evening peak period\u00a0", "min": 0.0, "varName": "SLD_D4c", "median": 0.0, "source": "EPA Smart Location Database, based on GTFS data for MBTA, Massport, and 9 of the 15 RTAs in Massachusetts.", "stdDev": 123.75, "longName": "Transit Frequency within 1/4 Mile", "units": "trips per hour", "shortName": "Transit Access", "mean": 25.783}, "pop10": {"max": 3867.0, "description": "Population based on 2010 U.S. Census", "min": 1.0, "varName": "pop10", "median": 18.0, "source": "2010 U.S. Census data as coded to grid by MAPC.", "stdDev": 95.14, "longName": "Total population, 2010", "units": "persons per grid", "shortName": "Population", "mean": 45.922}, "pttlasval": {"max": 1404500000.0, "description": "Total assessed value of all land, buildings, and other improvements in this grid cell, in dollars. Based on local assessing records from 2009 - 2014.", "min": 0.0, "varName": "pttlasval", "median": 2921200.0, "source": "MassGIS Level 3 Parcel Data, MAPC analysis.", "stdDev": 18385000.0, "longName": "Total Assessed Value of All Parcels", "units": "$", "shortName": "Assessed Value", "mean": 6238300.0}, "sidewlksqm": {"max": 6555.7, "description": "Linear length of sidewalks in this grid cell. Sidewalks on opposite sides of a roadway are counted separately.", "min": 0.0, "varName": "sidewlksqm", "median": 0.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 683.49, "longName": "Sidewalk Density", "units": "sq meter", "shortName": "Sidewalks", "mean": 319.84}, "intsctnden": {"max": 695.0, "description": "Count of roadway intersections in this grid cell.", "min": 0.0, "varName": "intsctnden", "median": 34.0, "source": "MassDOT Road Layer, MAPC Analysis", "stdDev": 74.196, "longName": "Intersections", "units": "intersections per grid", "shortName": "Intersections", "mean": 60.331}, "schwlkindx": {"max": 9.78, "description": "Index of school walkability developed by MAPC, based on number of public, private, or charter school grades within one mile walking distance of grid centroid", "min": 0.0, "varName": "schwlkindx", "median": 0.0, "source": "MAPC", "stdDev": 0.76835, "longName": "Schools Within a Mile", "units": "?", "shortName": "Schools Nearby", "mean": 0.31206}}
 
 
-    var startRegion = 0;
-
-    if(testing){
-	startRegion = 2;
-    }
-    var regions = [
-   
-    {'longName': "MA by Zip Code", "shortName": "zip",
-     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
-     'fileName': "data/zip_attr.geojson"},
-    {'longName': "Boston Metro Area by Grid", "shortName": "bos",
-     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
-     'fileName': "data/grid_attr_filtBOSMetro.geojson"},
-    {'longName': "Berkshires by Grid", "shortName": "BRPC",
-     'startLoc': {'lat': 42.4061, 'lng': -72.611, 'zoom':9},
-     'fileName': "data/grid_attr_filtBRPC.geojson"},
-
-    {'longName': "Cape and the Islands by Grid", "shortName": "Cape",
-     'startLoc': {'lat': 41.9912, 'lng': -70.72448, 'zoom':9},
-
-     'fileName': "data/grid_attr_filtCape.geojson"},
-
-]
-
+    
 
 
 
@@ -248,7 +276,7 @@ var temp= [
 	    labels.exit().remove();
 	}
     
-    window.view_model = new ViewModel(options, startRegion);
+    window.view_model = new ViewModel(options, startOption, startRegion);
     
     ko.computed(function(){
 	console.log("changed " +  view_model.title());
@@ -281,7 +309,7 @@ var temp= [
 	map.on("viewreset", reset);
 	map.on("dragend", function(){
 	    console.log(map.getCenter());
-	    console.log(map.zoom());
+//	    console.log(map.zoom());
 	});
 	reset();
 	
