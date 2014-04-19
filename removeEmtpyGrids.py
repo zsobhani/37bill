@@ -8,7 +8,7 @@ import math
 
 sfBase = "data/grid_250m_shell"
 
-csvfile = open("proc/GridAnalysis_v2.csv",'r')
+csvfile = open("proc/GridAnalysisFinal3.csv",'r')
 data = csv.DictReader(csvfile) #read the data in as a dictionary
 
 # first figure out what grids we want to keep

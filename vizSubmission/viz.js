@@ -1,6 +1,7 @@
-var ViewModel = function(options, selectedIndex){
+var ViewModel = function(options, selectedIndex, selectedRegion){
     this.options = options;
     this.selectedIndex = ko.observable(selectedIndex);
+    this.selectedRegion = ko.observable(selectedRegion);
     
     this.selectedMetric = ko.computed(function(){
 	return this.options[this.selectedIndex()];
@@ -44,9 +45,14 @@ $(document).ready(function() {
 
 
 
-
-
-
+var regions = [
+    {'longName': "MA by Zip Code", "shortName": "zip",
+     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':8},
+     'fileName': "data/zip_attr.geojson"},
+    {'longName': "Boston Metro Area", "shortName": "bos",
+     'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
+     'fileName': "data/grid_attr_filtBOSMetro.geojson"},
+]
 
 
 
@@ -157,6 +163,14 @@ $(document).ready(function() {
 	return varNames[d.varName].shortName;
     }
 
+    d3.select("#regionSelection")
+	.selectAll("option")
+	.data(regions)
+	.enter()
+	.append("option")
+    .attr("value", function(d, i){return i;})
+    .text(function(d){return d.longName;});
+
     d3.select("#metricSelection")
 	.selectAll("option")
 	.data(options)
@@ -216,7 +230,7 @@ $(document).ready(function() {
     // using this tutorial: http://bost.ocks.org/mike/leaflet/
     var fileZip = "data/zip_attr.geojson";
  
-    var fileGrid = "data/grid_attr_filtBOS4.geojson";
+    var fileGrid = "data/grid_attr_filtBOSMetro.geojson";
     // Too slow with the whole state: var file = "data/grid_attr_MA.geojson";
     
     var zipJSON = null;
@@ -224,7 +238,7 @@ $(document).ready(function() {
     ko.applyBindings(view_model); // ko gets to work
     
 
-    function renderCollection(collection){
+    function renderCollection(collection, region){
 	var transform = d3.geo.transform({point: projectPoint}),
 	path = d3.geo.path().projection(transform);
 	gGeoJSON.selectAll("path").remove();
@@ -233,12 +247,14 @@ $(document).ready(function() {
 	    .enter().append("path")
 	    .attr("class", "mappath");
 
+	map.setView(new L.LatLng(region.lat, region.lng), region.zoom);
 	map.on("viewreset", reset);
 	
 	reset();
 	
 	ko.computed(function(){
 	    view_model.selectedIndex();
+	    view_model.selectedRegion();
 	    reset();
 	});
 	var mapOffsetsStartup = $(map.getPanes().overlayPane).offset();
@@ -330,8 +346,9 @@ $(document).ready(function() {
 	
 	// Reposition the SVG to cover the features.
 	function reset() {
-	    console.log(map.getZoom());
+	    console.log("reset called!: " + map.getZoom());
 	    var ind = view_model.selectedIndex()
+	    
 	    updateLegend(ind);
 	    
 	    var bounds = path.bounds(collection),
@@ -382,62 +399,71 @@ $(document).ready(function() {
 	}
 	
     }
-    
-    // track which zoom level we are at, track if json has been loaded
-    // switch bound features based on zoom level
-    function renderZipJSON(){
-	if(zipJSON !=null){
-	    renderCollection(zipJSON);
-	}else{
-	    d3.json(fileZip, function(collection){
-		renderCollection(collection)
-		zipJSON = collection;
-	    });
-	    
-	}
-    }
-    
- // track which zoom level we are at, track if json has been loaded
-    // switch bound features based on zoom level
-    function renderGridJSON(){
-	if(gridJSON !=null){
-	    renderCollection(gridJSON);
-	}else{
-	    d3.json(fileGrid, function(collection){
-		renderCollection(collection)
-		gridJSON = collection;
-	    });
-	    
-	}
-    }
-    
-    renderZipJSON();
-    map.on("zoomend", function(){
-	console.log("zoomStart: " + map.getZoom());
-	if(map.getZoom() > zoomThresh){
-	    if(viewIsGrid){
-		// do nothing
-	    }else{
-		renderGridJSON();
-		viewIsGrid = true;
-	    }
-	    // not hysteresis on zoom, no change on threshold!
-	}else if (map.getZoom() < zoomThresh){
-	    if(viewIsGrid){
-		renderZipJSON();
-		viewIsGrid = false;
-	    }else{
-		// do nothing
-	    }
-	}
-	
-	
-	console.log("zoomStartAfter: " + map.getZoom());
+    ko.computed(function(){
+	var reg = view_model.selectedRegion();
+	console.log("selected Region # " + reg);
+	var region = regions[reg]
+	viewIsGrid = reg !=0;
+	d3.json(region.fileName, function(collection){
+		renderCollection(collection, region.startLoc)
+	});
     });
-    map.on("zoomstart", function(){
 
-	console.log("zoomend" + map.getZoom());
-    });
+  //   // track which zoom level we are at, track if json has been loaded
+ //    // switch bound features based on zoom level
+ //    function renderZipJSON(){
+ // 	if(zipJSON !=null){
+ // 	    renderCollection(zipJSON);
+ // 	}else{
+ // 	    d3.json(fileZip, function(collection){
+ // 		renderCollection(collection)
+ // 		zipJSON = collection;
+ // 	    });
+	    
+ // 	}
+ //    }
+    
+ // // track which zoom level we are at, track if json has been loaded
+ //    // switch bound features based on zoom level
+ //    function renderGridJSON(){
+ // 	if(gridJSON !=null){
+ // 	    renderCollection(gridJSON);
+ // 	}else{
+ // 	    d3.json(fileGrid, function(collection){
+ // 		renderCollection(collection)
+ // 		gridJSON = collection;
+ // 	    });
+	    
+ // 	}
+ //    }
+    
+ //    renderZipJSON();
+    // map.on("zoomend", function(){
+	
+    // 	if(map.getZoom() > zoomThresh){
+    // 	    if(viewIsGrid){
+    // 		// do nothing
+    // 	    }else{
+    // 		renderGridJSON();
+    // 		viewIsGrid = true;
+    // 	    }
+    // 	    // not hysteresis on zoom, no change on threshold!
+    // 	}else if (map.getZoom() < zoomThresh){
+    // 	    if(viewIsGrid){
+    // 		renderZipJSON();
+    // 		viewIsGrid = false;
+    // 	    }else{
+    // 		// do nothing
+    // 	    }
+    // 	}
+	
+	
+	
+    // });
+    // map.on("zoomstart", function(){
+
+	
+    // });
     
 		  
 
