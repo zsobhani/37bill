@@ -47,7 +47,7 @@ h3,h2{
     position:absolute;
     padding: 5px;
     left: 670px; /* 20 more than map width, also set offsets in js for tooltip*/
-    top: 380px;
+    top: 395px;
     background: none;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
