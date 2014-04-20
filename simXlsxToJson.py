@@ -40,7 +40,7 @@ def dataFromWorksheet(worksheet):
         data.append(d)
     return data
 
-[5000, 10000, 30000, 50000, 100000, 200000, 300000] // should specify 8 at most
+
 def getStartEndRanges(worksheet):
     int_strings = worksheet.col_values(c_intervals, 1, -1)
     pred_val = worksheet.col_values(c_modelOut, 1, -1)
