@@ -586,13 +586,12 @@ var temp= [
 	var side = widthSmall;
 	var axisFudge = 30*yaxisDesired;
 	var topFudge = 40*allowHigher;
-	var margin = {top: 10+topFudge, right: 5, bottom: 30, left: (30+axisFudge)},
+	var margin = {top: 10+topFudge, right: 10, bottom: 30, left: (30+axisFudge)},
 	width = side - margin.left - margin.right + axisFudge,
 	height = side - margin.top - margin.bottom + topFudge;
 	var svgP = d3.select("#plotContainer").selectAll("."+d.varName)
 	    .data([d])
-	    .enter()
-	    .append("svg")
+	    .enter()	    .append("svg")
 	    .attr("class", d.varName)
 	    .attr("width", width + margin.left +margin.right)
 	    .attr("height", height + margin.top + margin.bottom)
