@@ -65,12 +65,11 @@ h3,h2{
    width: 390px;
    height: 34px;
    overflow: hidden;
-   background: url(icon-chevron-down.png) no-repeat right #d9d9d9;
+  
    border: 0;/*1px solid #ccc;*/
    }
 .ast{
     font-size:12pt;
-    color: #999999;
 }
 table{
     font-size: 
@@ -85,7 +84,7 @@ table{
    width: 225px;
    height: 34px;
    overflow: hidden;
-
+   
    border: 0;/*1px solid #ccc;*/
    }
 
