@@ -104,14 +104,15 @@ h3,h2{
 .lineAct {
     fill: none;
     stroke-width: 4;
-    stroke: #b06379;
+    stroke: #9f9f9f;
     opacity: 1;
 }
 
 .linePred {
     fill: none;
     stroke-width: 4;
-    stroke: #fbb787;
+
+    stroke: #eb7273;
     opacity: 1;
 }
 .lineCount {
