@@ -4,13 +4,19 @@ p{
 }
 body{
     margin-left: 10px;
+   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+   font-weight: 300;
+
 }
 #mapContainer{
     position: relative;
     height: 600px;
-    background: #5f5f5f;
+    background: #f5f5f5;
     padding: 20px;
     width: 960px;
+    border-top: 5px solid #9f9f9f;
+    border-bottom: 5px solid #9f9f9f;
+
 }
 
 #map {
@@ -25,7 +31,7 @@ body{
     padding: 5px;
     left: 650px; /* 20 more than map width, also set offsets in js for tooltip*/
     top: 280px;
-    background: white;
+    background: none;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
 
@@ -117,20 +123,26 @@ body{
 #tooltipContainer{
     position: absolute;
     display: block; 
-    background: white;
+    opacity: 0;
+    background: #f5f5f5;
     color: dimgray;
-    border-radius: 3px;
+    
     padding: 10px;
     width: 275px;
-    opacity: 0;
     pointer-events: none;
     top: 60px;
     left: 650px;
+    border-top: 1px solid #9f9f9f;
+    border-bottom: 1px solid #9f9f9f;
+
+}
+.tooltipTitleContainer{
+    margin-bottom: 5px;
 }
 .tooltipTitle{
     font-weight: bold;
     text-align: left;
-    margin-bottom: 20px;
+    
     font-size: 18;
 }
 .tooltipSubTitle{
@@ -138,9 +150,11 @@ body{
     opacity: 0.8;
     float: right;
     font-size: 12;
+    
 }
 .tooltipMetricContainer{
-    background: white;
+    font-size:14;
+    
 }
 .tooltipMetricName{
     float: left;

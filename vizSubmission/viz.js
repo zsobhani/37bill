@@ -310,7 +310,7 @@ var temp= [
 		if(viewIsGrid){
 		    return("GRID # " + d.properties.g250m_id +"");
 		}else{
-		    return("Zip Code: "+ ("00000" +d.properties.zip_code).slice(-5));
+		    return("(zip code: "+ ("00000" +d.properties.zip_code).slice(-5) +")");
 		}
 	    }
 	    // set the data to display:
