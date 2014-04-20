@@ -659,6 +659,19 @@ var temp= [
 	    createSmallMult(collection[i], small_width, yaxisDesired,allowHigher, miny, maxy);
 	}
 	
+	d3.select("#plotContainer")
+	    .append("div")
+	    .attr("class","smallLegend")
+	    .text("- observed")
+	    .style("left", 885)
+	    .style("top", 110);
+	d3.select("#plotContainer")
+	    .append("div")
+	    .attr("class","smallLegend")
+	    .text("- predicted")
+	    .style("left", 885)
+	    .style("top", 143);
+	    
 
     });
 }
