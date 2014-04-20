@@ -6,14 +6,27 @@ body{
     margin-left: 50px;
     margin-top: 50px;
     color: #333333;
-   font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
-   font-weight: 300;
+   //font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-family: 'Open Sans', sans-serif;
+   font-weight: 400;
 
+}
+h1{
+    font-weight: 800;
+}
+h3,h2{
+    font-weight: 700;
+}
+
+.hint {
+    color: #9f9f9f;
+    position: absolute;
+    background: none;
 }
 #mapContainer{
     position: relative;
     height: 600px;   
-    padding: 20px;
+    padding: 25px;
     
     background: #f5f5f5;
     width: 960px;

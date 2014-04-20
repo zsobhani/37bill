@@ -312,7 +312,25 @@ var temp= [
     ko.applyBindings(view_model); // ko gets to work
 
     var simpleTooltip = d3.selectAll("#tooltipContainer");
+    var mapHint = d3.select("#mapContainer")
+	.append("div")
+	.attr("class","hint")
+	.text("<<  Roll over map to see individual data")
+	.style("left", 680)
+	.style("top", 200);
+    var menuHint = d3.select("#mapContainer")
+	.append("div")
+	.attr("class","hint")
+	.text("<<  Use the pulldown to explore different variables")
+	.style("left", 600)
+	.style("top", 20);
+    ko.computed(function(){
+	if(view_model.selectedIndex() != view_model.selectedRegion()){
+	menuHint.style("display","none");
+	}
+    });
 
+    
     function updateTooltip(d, displayRequested){
 	
         if(!displayRequested){
@@ -320,6 +338,7 @@ var temp= [
 	    simpleTooltip
 		.style("opacity", 0.4);
         }else{ // show the tooltip
+	    mapHint.style("display","none");
 	    function getCode(d){
 		if(viewIsGrid){
 		    return("GRID # " + d.properties.g250m_id +"");
