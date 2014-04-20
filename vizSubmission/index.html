@@ -49,52 +49,65 @@
   <div id="map"></div>
   <div id="legend"></div>
 </div>
-<h3>Map Details</h3>
+<h3>Using the Map Interactive</h3>
 <p>
-Select Miles of Driving per Day per Person and potential explanatory variables using the dropdown on the right. Select the scale using the other dropdown. Statewide data is shown at the zipcode level. Regional data is shown in 15 acre grid square (note that statewide data is normalized to per grid). <a href="DrivingandLandUse.pdf">Complete description of variables and sources.</a> 
-</p>
-<p>
-We tested a variety of potential explanatory variables – demographics, income, density, land uses, street width, intersections, sidewalks, and transit availability. Comparing these one at a time against miles driven can be misleading. For example, considered by themselves, more sidewalks, buildings, and area property value are each associated with less driving. But once we control for other factors, it turns out that the apparent relationship of each of them to driving disappears. We find that fewer roads, more intersections, and frequent transit do have an independent effect on reducing driving. But by far the strongest predictors of driving are population density and owner-occupied housing.
+
+We tested a variety of potential explanatory variables related to demographics, income, density, land use, street width, intersections, sidewalks, and transit availability. You can select miles of driving per day per person, CO2 emissions from cars per person, or any of several other potential explanatory variables. You can also select the scale, statewide or by region. Statewide data is shown at the zipcode level; regional data is shown in 15 acre grid cells. <b>Some scales with more detail, such as MAPC, may take a few moments to load.</b> You can also read a <a href="DrivingandLandUse.pdf">complete description of variables and sources.</a> 
 </p>
 
 <h2>A Model Incorporating Multiple Explanatory Factors</h2>
 <p>
-
-From the series of small multiples below we found a few surprises. What explains them? Explore the visualizations, then continue below for some explanations.
-We tested a variety of potential explanatory variables – demographics, income, density, land uses, street width, intersections, sidewalks, and transit availability. The plots below show the relationship between driving and several explanatory variables, both before (grey) and after (red) controlling for other factors that affect driving. How are they different?
-</p>
+From the exploratory mapping it’s clear that urban areas—where there is less driving per person— have a much higher concentration of people, jobs, sidewalks, roads, intersections, renters, and public transit. Is each of these factors in isolation also associated with less driving? The plots below show each of them compared to car use per person, both observed averages (grey) and our model predictions, when all other factors were held constant (red). </p>
 <div id="plotContainer">
 </div>
+<p>
+In the plots in the first row, the predicted values are roughly similar to the actual ones. In other cases, the predicted line is almost horizontal (% Children, Floor Area Ratio), showing that what seemed to be a relationship with driving disappears after controlling for other factors. In the case of Building Footprint, Assessed Value, and Sidewalks, the slope of the line changes directions, meaning that these factors which seem related to lower driving actually predict higher driving!
+</p>
+
 <h3>Explanatory Factors</h3>
-<p>Comparing these one at a time against miles driven can be misleading. For example, considered by themselves, more sidewalks, buildings, and area property value are each associated with less driving. But once we control for other factors, it turns out that the apparent relationship of each of them to driving disappears. We find that fewer roads, more intersections, and frequent transit do have an independent effect on reducing driving. But by far the strongest predictors of driving are population density and owner-occupied housing.
-</p>
 <p>
-Many factors are related to the observed variability in automobile miles traveled. Comparing each of these factors one at a time to miles per day per person can be misleading, because many of them vary together. For example, frequent transit service is generally only available in higher density areas, but high density also is expected to affect driving via congestion, parking, proximity, and biking and walking favorability. Thus any observed relationship between transit availability and driving may actually be the result of one of these other related variables. We have addressed this problem by estimating a multivariate model that uses all of these variables simultaneously. Multivariate regression models estimate the independent effect of each variable, controlling for all the others in the model.
+The plots show that comparing each factors one at a time to miles per day per person can be misleading, because many of them vary together. For example, frequent transit service is generally only available in higher density areas, but high density may also affect driving via congestion, parking access, and the viability of alternatives. The observed relationship between transit availability and driving may actually be the result of one of these other related variables. We have addressed this problem by estimating a multivariate model that uses all of these variables simultaneously. Multivariate regression models estimate the independent effect of each variable, controlling for all the others in the model.
 </p>
+
 <p>
-The demographic factors included were the number of children, the number of seniors, the number of households (household size), and household income. These and other variables are shown in the table below. In addition to area household income (HHIncBG), we have two other variables that are related to income: percent of housing units that are owner-occupied (OwnPct) and total assessed value of all property in the grid cell (pttlasval).
+The demographic factors included were the number of children, the number of seniors, the number of households (household size), and household income. In addition to area household income, we have two other variables that are related to income: percent of housing units that are owner-occupied and total assessed value of all property in the grid cell.
 </p>
+
 <p>
 We tested explanatory variables related to different aspects of the built environment that affect driving: 
 </p>
 <p>
-<b>Proximity.</b> People living next to more potential opportunities (jobs, shopping, parks, etc) can reach these places without driving as far as others who are more isolate, or can reach them by other means (by walking, biking, or using public transit). However, just because people can go to a nearby job or grocery store, however, does not mean they will necessarily choose that option over a preferable one further away.  <b>Variables tested</b>: measures of population (pop10), employment (total_emp), buildings (pbld_sqm), and building size (far_agg) as well as an index related to the number of nearby schools (schwlkindx). Since the grid cells are all the same size, these figures can be taken as rough measures of the density of population, employment, and buildings.
+<b>Proximity.</b> People living next to more potential opportunities (jobs, shopping, parks, etc) can reach these places without driving as far as others who are more isolate, or can reach them by other means (by walking, biking, or using public transit). However, just because people can go to a nearby job or grocery store, however, does not mean they will necessarily choose that option over a preferable one further away.  
+
+<b>Variables tested</b>: 
+measures of population, employment, building footprint, and building bulk as well as an index of the number of nearby schools. Since the grid cells are all the same size, these are measures of the density of population, employment, and buildings.
+
 </p>
 
-<p><b>Cost of Driving. </b>The major variable costs of driving that vary over space are tolls, parking fees, and driver time. The first two only affect a small portion of trips, since roads and parking are generally free. However, traffic congestion and parking scarcity increases the time cost of driving greatly, especially in the older portions of the state that were built with narrower roads and limited off-street parking. Congestion may also be related to the size of the urban area, since in larger areas the flows of traffic may be greater. <b>Variables Tested</b>: the extent of the road network (prow_sqm), the amount of parking lots and driveways (ppaved_sqm), and the on-road distance to the nearest highway interchange. However, the proximity measures may also be related to the amount of roadway congestions– and thus are also potentially indicators of the cost of driving.
+<p><b>Cost of Driving. </b>The major variable costs of driving that vary over space are tolls, parking fees, and driver time. The first two only affect a small portion of trips, since roads and parking are generally free. However, traffic congestion and parking scarcity increases the time cost of driving greatly, especially in the older portions of the state that were built with narrower roads and limited off-street parking. Congestion may also be related to the size of the urban area, since in larger areas the flows of traffic may be greater. <b>Variables Tested</b>: 
+the extent of the road network, the amount of parking lots and driveways, and the on-road distance to the nearest highway interchange. 
+
 </p><p>
-<b>Transit Accessibility.</b> Transit requires both a concentration of residences (for economical walk access) and a concentration of employment (or other attractions at the destination end of the trip, since driving egress is generally not feasible). Transit does best in locations that had already developed these patterns prior to the widespread suburbanization of people and jobs after the Second World War.<b> Variable Tested</b>: aggregate frequency of transit service within 0.25 miles of the Census block group (in which the grid cell is located) boundary per hour during evening peak period (SLD_d4c).
+<b>Transit Accessibility.</b> Transit requires both a concentration of residences (for economical walk access) and a concentration of employment (or other attractions at the destination end of the trip, since driving egress is generally not feasible). Transit does best in locations that had already developed these patterns prior to the widespread suburbanization of people and jobs after the Second World War.<b> Variable Tested</b>:
+
+ aggregate frequency of transit service within 0.25 miles of the Census block group (in which the grid cell is located) boundary per hour during evening peak period.
 </p><p>
-<b>Walk and Bike Access.</b> Walking and biking are favored not only by proximity, but also by grid networks that minimize travel distance and provide the possibility of walking or biking along low-volume, low-speed streets. A built-out street front also makes walking safer and more pleasant (compared to walking along buildings fronted by parking lots, for example.) The presence of sidewalks and bike paths may also increase walking and biking. <b>Variables Tested</b>: the number of intersections (intsctnden), which may differentiate older grid-based street networks from rural areas and suburban areas with cul-de-sac networks. We also have a measure of the number of sidewalks within the grid (sidewlksqm).
+<b>Walk and Bike Access.</b> Walking and biking are favored not only by proximity, but also by grid networks that minimize travel distance and provide the possibility of walking or biking along low-volume, low-speed streets. A built-out street front also makes walking safer and more pleasant (compared to walking along buildings fronted by parking lots, for example.) The presence of sidewalks and bike paths may also increase walking and biking. <b>Variables Tested</b>: 
+the number of intersections, which may differentiate older grid-based street networks from rural areas and suburban areas with cul-de-sac networks. We also have a measure of the amount of sidewalks within the grid cell.
 </p>
 
 <h3>Model Results</h3>
 <p>
-This series of plots shows that the estimated relationships found in the regression modeling in many cases differ substantially from a simple comparison between the explanatory variable and driving. In each plot, the blue line shows miles driven from the data. The orange line shows the amount of driving  predicted <i>if all other variables were held constant</i>. The explanation of the discrepancies between the two lines is that many of these variables are interrelated. However the dataset is large enough (almost 100,000 observations) that it is possible to tease out the independent effects of each variable (except percent children and employment, which were not statistically significant). <a href="DrivingandLandUse.pdf">Complete model results are available</a>.
-</p><p>
-One way of comparing the importance of the variables in the model is to look at <i>elasticity</i>, which is defined as the percent change in Miles per Day per Person that results from a 1% change in the independent variable. An elasticity that is larger than another one (in absolute value) means that the driving  is more sensitive to changes in that variable. The elasticities for this model are shown below. Three of them stand out as significantly higher than the rest: owner-occupied housing share, population, and households. Increasing population density is strongly related to reducing driving.  Increasing the share of homeowners would tend to increase driving: there is both an income effect (since homeowners tend to have higher than average income) and a spatial effect (since owned housing is most likely to be single-family housing).  All of the remaining variables but two have a measurable, but small, impact on driving. The most notable one is intersection density. This association could be because areas with a grid of streets are more conducive to walking, biking, and transit, and it could also be because such areas have narrow streets and limited off-street parking, making driving slower and more expensive.
+The dataset is large enough (almost 95,000 grid cells) that it is possible to tease out the independent effects of each variable. All were statistically significant except percent children and distance to highway exit. Among the demographic factors, higher income, homeownership, and households were associated with more driving, and a greater share of seniors was associated with less driving. Among the land use factors, more intersections, transit, schools, parking lots, and jobs were associated with less driving, but more roads, sidewalks, buildings (both footprint and FAR), and assessed value of parcels were linked to <b>more</b> driving.
+<a href="DrivingandLandUse.pdf">Complete model results are available</a>.
 </p>
 
+<p>
+One way of comparing the importance of the variables in the model is to look at <i>elasticity</i>, which is defined as the percent change in Miles per Day per Person that results from a 1% change in the independent variable. An elasticity that is larger than another one (in absolute value) means that the driving  is more sensitive to changes in that variable. The elasticities for this model are shown below. Three of them stand out as significantly higher than the rest: owner-occupied housing share, population, and households. Increasing population density is strongly related to reducing driving.  Increasing the share of homeowners would tend to increase driving: there is both an income effect (since homeowners tend to have higher than average income) and a spatial effect (since owned housing is most likely to be single-family housing).  All of the remaining variables but two have a measurable, but small, impact on driving. The most notable one is intersection density. This association could be because areas with a grid of streets are more conducive to walking, biking, and transit, and it could also be because such areas have narrow streets and limited off-street parking, making driving slower and more expensive.
+</p>
+<p>
+The overall results show that although many land use variables appear to be connected with the lower amount of driving we observe in urban areas, some are actually unrelated, whereas others have the opposite relationship—leading to more driving. Fewer roads, more intersections, and frequent transit do have an independent effect on reducing driving, but by far the strongest predictors of driving are population density and homeownership. This may be because population density and are the best proxies, dwarfing all others, to quantify the difference in the time cost of driving and the viability of walking, biking and public transit in urban compared to suburban areas. 
+</p>
 <div id="eTable">
 <h3>Elasticities of Explanatory Variables with Respect to Miles per Day per Person</h3>
 <!-- Please do not remove this header -->
@@ -195,6 +208,9 @@ One way of comparing the importance of the variables in the model is to look at 
 
 </div>
 
+<p>
+We find that fewer roads, more intersections, and frequent transit do have an independent effect on reducing driving. But by far the strongest predictors of driving are population density and owner-occupied housing.
+</p>
 
 <h3> Credits </h3>
 
@@ -208,13 +224,13 @@ Zia has worked in alternative transportation for years, building and racing sola
 Kim previously managed the design group at WGBH Interactive and is currently Director of Design at CAST. She provided information design strategy, visual and editorial design consultation.
 </p>
 
+<p>Data from the Vehicle Census of Massachusetts, Metropolitan Area Planning Council 2014, documented here: <a href="http://www.mapc.org/sites/default/files/VehicleCensusofMA_Documentation_v1.pdf">http://www.mapc.org/sites/default/files/VehicleCensusofMA_Documentation_v1.pdf</a>. 
+</p><p>The Massachusetts Vehicle Census dataset is licensed by MAPC under a <a href="http://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International Public License</a>.
+</p>
 <p>This product includes color
 specifications and designs developed by Cynthia Brewer
 (<a href="http://colorbrewer.org/">http://colorbrewer.org/</a>).</p>
 <p>  Map tiles by <a href="http://stamen.com">Stamen Design</a>, under <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>. Data by <a href="http://openstreetmap.org">OpenStreetMap</a>, under <a href="http://creativecommons.org/licenses/by-sa/3.0">CC BY SA</a>.
-</p>
-<p>Data from the Vehicle Census of Massachusetts, Metropolitan Area Planning Council 2014, documented here: <a href="http://www.mapc.org/sites/default/files/VehicleCensusofMA_Documentation_v1.pdf">http://www.mapc.org/sites/default/files/VehicleCensusofMA_Documentation_v1.pdf</a>. 
-</p><p>The Massachusetts Vehicle Census dataset is licensed by MAPC under a <a href="http://creativecommons.org/licenses/by/4.0/legalcode">Creative Commons Attribution 4.0 International Public License</a>.
 </p>
 
 
