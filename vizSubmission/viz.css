@@ -3,16 +3,19 @@ p{
     width: 960px;
 }
 body{
-    margin-left: 10px;
+    margin-left: 50px;
+    margin-top: 50px;
+    color: #333333;
    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
    font-weight: 300;
 
 }
 #mapContainer{
     position: relative;
-    height: 600px;
-    background: #f5f5f5;
+    height: 600px;   
     padding: 20px;
+    
+    background: #f5f5f5;
     width: 960px;
     border-top: 5px solid #9f9f9f;
     border-bottom: 5px solid #9f9f9f;
@@ -20,17 +23,17 @@ body{
 }
 
 #map {
-  width: 600px;
-  height: 450px;
+  width: 630px;
+  height: 550px;
   position: absolute;
-  top: 50px;
+  top: 60px;
 }
 
 #legend{
     position:absolute;
     padding: 5px;
-    left: 650px; /* 20 more than map width, also set offsets in js for tooltip*/
-    top: 280px;
+    left: 670px; /* 20 more than map width, also set offsets in js for tooltip*/
+    top: 380px;
     background: none;
     fill-opacity: 0.6; /*to match path fill below for svg elements*/
 }
@@ -75,20 +78,28 @@ body{
 }
 
 #plotContainer{
-    width: 960;
+    background: #f5f5f5;
+    width: 940px;
+    border-top: 5px solid #9f9f9f;
+    border-bottom: 5px solid #9f9f9f;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    padding-left: 60px;
+
     
 }
 .lineAct {
     fill: none;
     stroke-width: 4;
-    stroke: teal;
-    stroke-opacity: 0.3;
+    stroke: #b06379;
+    opacity: 1;
 }
 
 .linePred {
     fill: none;
-    stroke-width: 3;
-    stroke: orange;
+    stroke-width: 4;
+    stroke: #fbb787;
+    opacity: 1;
 }
 .lineCount {
     fill: grey;
@@ -128,10 +139,10 @@ body{
     color: dimgray;
     
     padding: 10px;
-    width: 275px;
+    width: 285px;
     pointer-events: none;
     top: 60px;
-    left: 650px;
+    left: 670px;
     border-top: 1px solid #9f9f9f;
     border-bottom: 1px solid #9f9f9f;
 

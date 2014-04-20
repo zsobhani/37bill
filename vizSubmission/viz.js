@@ -45,7 +45,7 @@ var startRegion = 0;
     var regions = [
    
     {'longName': "MA by Zip Code", "shortName": "zip",
-     'startLoc': {'lat': 42.03297, 'lng': -71.52648, 'zoom':8},
+     'startLoc': {'lat': 42.3179, 'lng': -71.3095, 'zoom':9},
      'fileName': "data/zip_attr.geojson"},
     {'longName': "Boston Metro Area by Grid", "shortName": "bos",
      'startLoc': {'lat': 42.355, 'lng': -71.11, 'zoom':11},
@@ -253,11 +253,25 @@ var temp= [
 	    // appropriate compare function including the "ind"
 	    // or rather deleting them is a simpler option
 	    legend.selectAll("rect").remove();
-	    var rects = legend.selectAll("rect")
+	    var rects = legend.selectAll(".rectWhite")
 		.data(lstr, function(d, i){ return d + i;});
 	    rects
 		.enter()
 		.append("rect")
+		.attr("class","rectWhite")
+		.attr("x", 0)
+		.attr("y", function(d, i){return i*(lh+lmargin);})
+		.attr("width", lw)
+		.attr("height", lh)
+		.attr("fill", "white")
+	    rects.exit().remove();
+	    
+	    var rects = legend.selectAll(".rectColor")
+		.data(lstr, function(d, i){ return d + i;});
+	    rects
+		.enter()
+		.append("rect")
+		.attr("class","rectColor")
 		.attr("x", 0)
 		.attr("y", function(d, i){return i*(lh+lmargin);})
 		.attr("width", lw)
