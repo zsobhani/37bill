@@ -658,7 +658,7 @@ var temp= [
 	    var allowHigher = i<num_per_row;
 	    createSmallMult(collection[i], small_width, yaxisDesired,allowHigher, miny, maxy);
 	}
-
+	
 
     });
 }
