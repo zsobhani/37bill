@@ -68,15 +68,39 @@ h3,h2{
   
    border: 0;/*1px solid #ccc;*/
    }
+
+#eTable {
+    padding-left: 100px;
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
 .ast{
-    font-size:12pt;
+    padding-left: 20px;
+    font-size: 12;
+    color: #999999;
 }
 table{
-    font-size: 
-    border-bottom: 1px grey;
+    font-size: 14;
+
+    border-collapse: collapse;
 
 }
+td{
+padding-left: 25px;
+padding-right: 25px;
 
+}
+tr{
+    border: solid;
+    border-width: 1px 0;
+    border-color: #e2e2e2;
+}
+tr:first-child{
+border-top-color: #999999;
+}
+tr:last-child{
+border-bottom-color: #999999;
+}
 .styled-select-region {
     font-size: 18;
     padding-left: 5px;
