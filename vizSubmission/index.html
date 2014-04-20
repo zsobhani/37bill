@@ -51,7 +51,7 @@
 </div>
 <h3>Map Details</h3>
 <p>
-Select Miles of Driving per Day per Person and potential explanatory variables using the dropdown on the right. Select the scale using the other dropdown. Statewide data is shown at the zipcode level. Regional data is shown in 15 acre grid squares. <a href="DrivingandLandUse.pdf">Complete description of variables and sources.</a> 
+Select Miles of Driving per Day per Person and potential explanatory variables using the dropdown on the right. Select the scale using the other dropdown. Statewide data is shown at the zipcode level. Regional data is shown in 15 acre grid square (note that statewide data is normalized to per grid). <a href="DrivingandLandUse.pdf">Complete description of variables and sources.</a> 
 </p>
 <p>
 We tested a variety of potential explanatory variables – demographics, income, density, land uses, street width, intersections, sidewalks, and transit availability. Comparing these one at a time against miles driven can be misleading. For example, considered by themselves, more sidewalks, buildings, and area property value are each associated with less driving. But once we control for other factors, it turns out that the apparent relationship of each of them to driving disappears. We find that fewer roads, more intersections, and frequent transit do have an independent effect on reducing driving. But by far the strongest predictors of driving are population density and owner-occupied housing.
@@ -96,7 +96,104 @@ One way of comparing the importance of the variables in the model is to look at 
 </p>
 
 
-INSERT TABLE HERE
+<h3>Elasticities of Explanatory Variables with Respect to Miles per Day per Person</h3>
+<!-- Please do not remove this header -->
+<!-- Table easily created from Excel with ASAP Utilities (http://www.asap-utilities.com)  -->
+<table  cellspacing="0" cellpadding="2">
+ <tr>
+ <td valign="bottom"><b>Name</b></td>
+ <td valign="bottom"><b>Description</b></td>
+ <td valign="bottom"><b>Elasticity*</b></td>
+ </tr>
+ <tr>
+ <td valign="bottom">ChildPct</td>
+ <td valign="bottom">Population 5 to 17 as share of total</td>
+ <td align="right" valign="bottom">0.002</td>
+ </tr>
+ <tr>
+ <td valign="bottom">SeniorPct</td>
+ <td valign="bottom">Population 65+ as share of total</td>
+ <td align="right" valign="bottom">-0.09</td>
+ </tr>
+ <tr>
+ <td valign="bottom">OwnPct</td>
+ <td valign="bottom">Owned housing units as a percent of all housing units.</td>
+ <td align="right" valign="bottom">0.32</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_pop10</td>
+ <td valign="bottom">Total population, 2010</td>
+ <td align="right" valign="bottom">-0.76</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_hh10</td>
+ <td valign="bottom">Households, 2010</td>
+ <td align="right" valign="bottom">0.43</td>
+ </tr>
+ <tr>
+ <td valign="bottom">total_emp</td>
+ <td valign="bottom">Employment</td>
+ <td align="right" valign="bottom">-0.01</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_pbld_sqm</td>
+ <td valign="bottom">Building Footprint</td>
+ <td align="right" valign="bottom">0.14</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_prow_sqm</td>
+ <td valign="bottom">Right of Way Area</td>
+ <td align="right" valign="bottom">0.11</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_pttlasval</td>
+ <td valign="bottom">Total Assessed Value of All Parcels</td>
+ <td align="right" valign="bottom">0.08</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_ppaved_sqm</td>
+ <td valign="bottom">Parking Lots and Driveways</td>
+ <td align="right" valign="bottom">-0.03</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_far_agg</td>
+ <td valign="bottom">Floor Area Ratio</td>
+ <td align="right" valign="bottom">0.04</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_intsctnden</td>
+ <td valign="bottom">Intersections</td>
+ <td align="right" valign="bottom">-0.07</td>
+ </tr>
+ <tr>
+ <td valign="bottom">sidewlksqm</td>
+ <td valign="bottom">Sidewalk Density</td>
+ <td align="right" valign="bottom">0.02</td>
+ </tr>
+ <tr>
+ <td valign="bottom">schwlkindx</td>
+ <td valign="bottom">Schools Within a Mile</td>
+ <td align="right" valign="bottom">-0.01</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_exit_dist</td>
+ <td valign="bottom">Highway Exit Distance</td>
+ <td align="right" valign="bottom">-0.001</td>
+ </tr>
+ <tr>
+ <td valign="bottom">l_HHIncBG</td>
+ <td valign="bottom">Median household income of block group</td>
+ <td align="right" valign="bottom">0.03</td>
+ </tr>
+ <tr>
+ <td valign="bottom">SLD_D4c</td>
+ <td valign="bottom">Transit Frequency within 1/4 Mile</td>
+ <td align="right" valign="bottom">-0.01</td>
+ </tr>
+ <tr>
+ <td colspan="3" valign="bottom" class="ast"><i>*Calculated at the sample mean for independent variables not in log form.</i></td>
+ </tr>
+</table>
 
 
 <h3> Credits </h3>
