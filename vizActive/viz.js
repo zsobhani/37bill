@@ -519,6 +519,7 @@ var temp= [
 	var region = regions[reg]
 	viewIsGrid = reg !=0;
 	d3.json(region.fileName, function(collection){
+	    //console.log(collection);
 	    renderCollection(collection, region.startLoc)
 	});
     });
