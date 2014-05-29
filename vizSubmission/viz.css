@@ -11,6 +11,10 @@ body{
    font-weight: 400;
 
 }
+#redirect{
+    background: #fbe5a9;
+    padding: 10px;
+}
 
 h1{
     font-weight: 800;
